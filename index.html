@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="normalize.css">
     <link rel="stylesheet" href="style.css">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
@@ -13,7 +14,7 @@
     <link rel="manifest" href="favicon/site.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="tic-tac-toe.js" defer></script>
     <script src="https://kit.fontawesome.com/5f5b4189ad.js" crossorigin="anonymous" defer></script>
 </head>
@@ -33,6 +34,11 @@
             <div id="area-7" class="area blue"><span>o</span></div>
             <div id="area-8" class="area blue border-vertical"><span>o</span></div>
             <div id="area-9" class="area red"><span>x</span></div>
+        </div>
+        <div class="buttons">
+            <button type="button" id="pvpBtn" class="versus selected">Player&nbsp;vs Player</button>
+            <button type="button" id="restartBtn" class="restart">Restart</button>
+            <button type="button" id="pvcBtn" class="versus">Player&nbsp;vs Computer</button>
         </div>
     </main>
     <footer>
