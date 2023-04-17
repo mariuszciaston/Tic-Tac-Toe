@@ -35,10 +35,7 @@ main {
 	justify-content: center;
 	align-items: center;
 	flex-basis: 100%;
-
 	margin: 0 var(--med);
-	/* gap: var(--med);  */
-
 }
 
 .board {
