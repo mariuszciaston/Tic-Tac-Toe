@@ -7,28 +7,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="tic-tac-toe.js" defer></script>
+    <script src="https://kit.fontawesome.com/5f5b4189ad.js" crossorigin="anonymous" defer></script>
 </head>
 
 <body>
-    <header>Tic Tac Toe</header>
+    <header>
+        <h1>Tic Tac Toe</h1>
+    </header>
     <main>
         <div class="board">
-            <div id="area-1" class="area"><span>x</span></div>
-            <div id="area-2" class="area"><span>o</span></div>
-            <div id="area-3" class="area"><span>o</span></div>
-            <div id="area-4" class="area"><span>o</span></div>
-            <div id="area-5" class="area"><span>x</span></div>
-            <div id="area-6" class="area"><span>o</span></div>
-            <div id="area-7" class="area"><span>o</span></div>
-            <div id="area-8" class="area"><span>o</span></div>
-            <div id="area-9" class="area"><span>x</span></div>
+            <div id="area-1" class="area red"><span>x</span></div>
+            <div id="area-2" class="area blue border-vertical"><span>o</span></div>
+            <div id="area-3" class="area blue"><span>o</span></div>
+            <div id="area-4" class="area blue border-horizontal"><span>o</span></div>
+            <div id="area-5" class="area red border-center"><span>x</span></div>
+            <div id="area-6" class="area blue border-horizontal"><span>o</span></div>
+            <div id="area-7" class="area blue"><span>o</span></div>
+            <div id="area-8" class="area blue border-vertical"><span>o</span></div>
+            <div id="area-9" class="area red"><span>x</span></div>
         </div>
     </main>
-    <footer>footer</footer>
+    <footer>
+        <span>
+            <span class="emoji">🦕</span>Eat Sleep Code Repeat |&nbsp;</span><span>Mariusz Ciastoń 2023 &nbsp;
+            <a href="https://github.com/mariuszciaston/" target="_blank" rel="noopener"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
+        </span>
+    </footer>
 </body>
 
 </html>
