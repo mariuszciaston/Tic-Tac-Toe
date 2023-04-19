@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-    <link rel="manifest" href="favicon/site.webmanifest">
+    <link rel="manifest" href="site.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap" rel="stylesheet">
@@ -25,15 +25,15 @@
     </header>
     <main>
         <div class="board">
-            <div id="area-0" class="area"><span></span></div>
-            <div id="area-1" class="area border-vertical"><span></span></div>
-            <div id="area-2" class="area"><span></span></div>
-            <div id="area-3" class="area border-horizontal"><span></span></div>
-            <div id="area-4" class="area border-center"><span></span></div>
-            <div id="area-5" class="area border-horizontal"><span></span></div>
-            <div id="area-6" class="area"><span></span></div>
-            <div id="area-7" class="area border-vertical"><span></span></div>
-            <div id="area-8" class="area"><span></span></div>
+            <div data-index="0" class="area"><span></span></div>
+            <div data-index="1" class="area border-vertical"><span></span></div>
+            <div data-index="2" class="area"><span></span></div>
+            <div data-index="3" class="area border-horizontal"><span></span></div>
+            <div data-index="4" class="area border-center"><span></span></div>
+            <div data-index="5" class="area border-horizontal"><span></span></div>
+            <div data-index="6" class="area"><span></span></div>
+            <div data-index="7" class="area border-vertical"><span></span></div>
+            <div data-index="8" class="area"><span></span></div>
         </div>
         <div class="buttons">
             <button type="button" id="pvpBtn" class="versus selected">Player&nbsp;vs Player</button>
@@ -47,6 +47,8 @@
             <a href="https://github.com/mariuszciaston/" target="_blank" rel="noopener"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
         </span>
     </footer>
+
+
 </body>
 
 </html>
