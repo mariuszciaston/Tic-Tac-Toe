@@ -3,8 +3,8 @@ const gameBoard = (() => {
 	return { array };
 })();
 
-console.log('START:');
-console.log(gameBoard.array);
+// console.log('START:');
+// console.log(gameBoard.array);
 
 //---------------------------------------------------------------------------------
 
@@ -12,46 +12,45 @@ const player = (sign) => {
 	const placeSign = (place) => {
 		if (gameBoard.array[place] === '') {
 			gameBoard.array[place] = sign;
-		} else {
-			console.log("can't place sign here, place is already taken");
 		}
 	};
+
 	return { placeSign };
 };
 
-const player1 = player('o');
-const player2 = player('x');
-
-// player1.placeSign(0);
-// player1.placeSign(1);
-// player1.placeSign(2);
-
-// player2.placeSign(3);
-// player2.placeSign(4);
-// player2.placeSign(5);
-
-console.log('MANUAL PLACEMENT:');
-console.log(gameBoard.array);
-
 //---------------------------------------------------------------------------------
+let isOver = false;
+let turn = true;
 
 const gameController = (() => {
-	let turn = true;
 	const board = document.querySelector('.board');
 
+	const player1 = player('o');
+	const player2 = player('x');
+
+	console.log('TURN O');
+
 	board.addEventListener('click', (e) => {
-		if (turn) {
-			player1.placeSign(e.target.getAttribute('data-index'));
-			turn = !turn;
+		if (e.target.children[0].textContent === '') {
+			if (isOver === false) {
+				if (turn) {
+					console.log('TURN X');
+					player1.placeSign(e.target.getAttribute('data-index'));
+					turn = !turn;
+				} else {
+					console.log('TURN O');
+					player2.placeSign(e.target.getAttribute('data-index'));
+					turn = !turn;
+				}
+			}
 		} else {
-			player2.placeSign(e.target.getAttribute('data-index'));
-			turn = !turn;
+			console.log("can't place sign here, place is already taken");
 		}
 
 		displayController();
 
-		console.log('PO KLIKNIĘCIU:');
-		console.log(gameBoard.array);
+		// console.log('PO KLIKNIĘCIU:');
+		// console.log(gameBoard.array);
 
 		const winConditions = [
 			[0, 1, 2],
@@ -64,12 +63,19 @@ const gameController = (() => {
 			[2, 4, 6],
 		];
 
-		for (let i = 0; i < winConditions.length; i += 1) {
-			const condition = winConditions[i];
-			if (gameBoard.array[condition[0]] === 'o' && gameBoard.array[condition[1]] === 'o' && gameBoard.array[condition[2]] === 'o') {
-				console.log('o win');
-			} else if (gameBoard.array[condition[0]] === 'x' && gameBoard.array[condition[1]] === 'x' && gameBoard.array[condition[2]] === 'x') {
-				console.log('x win');
+		if (isOver === false) {
+			for (let i = 0; i < winConditions.length; i += 1) {
+				const condition = winConditions[i];
+				if (gameBoard.array[condition[0]] === 'o' && gameBoard.array[condition[1]] === 'o' && gameBoard.array[condition[2]] === 'o') {
+					console.log('O WIN !!!');
+					isOver = true;
+				} else if (gameBoard.array[condition[0]] === 'x' && gameBoard.array[condition[1]] === 'x' && gameBoard.array[condition[2]] === 'x') {
+					console.log('X WIN !!!');
+					isOver = true;
+				} else if (gameBoard.array.every((element) => element !== '')) {
+					console.log('DRAW !!!');
+					isOver = true;
+				}
 			}
 		}
 	});
@@ -78,7 +84,6 @@ const gameController = (() => {
 //---------------------------------------------------------------------------------
 
 const displayController = (() => {
-	const restartBtn = document.querySelector('#restartBtn');
 	const refresh = () => {
 		for (let i = 0; i < 9; i += 1) {
 			const area = document.querySelector(`[data-index="${i}"] > span`);
@@ -88,12 +93,16 @@ const displayController = (() => {
 		}
 	};
 
+	const restartBtn = document.querySelector('#restartBtn');
 	restartBtn.addEventListener('click', () => {
 		gameBoard.array = ['', '', '', '', '', '', '', '', ''];
 		displayController();
 
-		console.log('RESTART:');
-		console.log(gameBoard.array);
+		// console.log('RESTART:');
+		// console.log(gameBoard.array);
+
+		isOver = false;
+		turn = true;
 	});
 
 	return refresh;
