@@ -20,77 +20,86 @@ const playerFactory = (sign) => {
 //---------------------------------------------------------------------------------
 
 const gameController = (() => {
-	let isOver = false;
-	let turn = true;
 	const player1 = playerFactory('o');
 	const player2 = playerFactory('x');
+
+	let isOver = false;
+	let turn = 'o';
 	console.log('TURN O');
 
-	const board = document.querySelector('.board');
-	board.addEventListener('click', (e) => {
+	const whoWon = () => {
+		const winConditions = [
+			[0, 1, 2],
+			[3, 4, 5],
+			[6, 7, 8],
+			[0, 3, 6],
+			[1, 4, 7],
+			[2, 5, 8],
+			[0, 4, 8],
+			[2, 4, 6],
+		];
+
+		for (let i = 0; i < winConditions.length; i += 1) {
+			const condition = winConditions[i];
+
+			if (gameBoard.array[condition[0]] === 'o' && gameBoard.array[condition[1]] === 'o' && gameBoard.array[condition[2]] === 'o') {
+				console.log('O WIN !!!');
+				isOver = true;
+			}
+
+			if (gameBoard.array[condition[0]] === 'x' && gameBoard.array[condition[1]] === 'x' && gameBoard.array[condition[2]] === 'x') {
+				console.log('X WIN !!!');
+				isOver = true;
+			}
+		}
+
 		if (isOver === false) {
-			if (e.target.children[0].textContent === '') {
-				if (turn) {
-					player1.placeSign(e.target.getAttribute('data-index'));
+			if (gameBoard.array.every((element) => element !== '')) {
+				console.log('DRAW !!!');
+				isOver = true;
+			}
+		}
+	};
+
+	const play = (place) => {
+		if (isOver === false) {
+			if (gameBoard.array[place] === '') {
+				if (turn === 'o') {
+					player1.placeSign(place);
 					console.log(gameBoard.array);
 
-					console.log('TURN X');
-					turn = !turn;
-				} else {
-					player2.placeSign(e.target.getAttribute('data-index'));
+					whoWon();
+
+					if (isOver === false) {
+						turn = 'x';
+						console.log('TURN X');
+					}
+				} else if (turn === 'x') {
+					player2.placeSign(place);
 					console.log(gameBoard.array);
 
-					console.log('TURN O');
-					turn = !turn;
+					whoWon();
+
+					if (isOver === false) {
+						turn = 'o';
+						console.log('TURN O');
+					}
 				}
 			} else {
 				console.log("can't place sign here, place is already taken");
 			}
-
-			displayController.refresh();
-
-			const winConditions = [
-				[0, 1, 2],
-				[3, 4, 5],
-				[6, 7, 8],
-				[0, 3, 6],
-				[1, 4, 7],
-				[2, 5, 8],
-				[0, 4, 8],
-				[2, 4, 6],
-			];
-
-			for (let i = 0; i < winConditions.length; i += 1) {
-				const condition = winConditions[i];
-
-				if (gameBoard.array[condition[0]] === 'o' && gameBoard.array[condition[1]] === 'o' && gameBoard.array[condition[2]] === 'o') {
-					console.log('O WIN !!!');
-					isOver = true;
-				} else if (gameBoard.array[condition[0]] === 'x' && gameBoard.array[condition[1]] === 'x' && gameBoard.array[condition[2]] === 'x') {
-					console.log('X WIN !!!');
-					isOver = true;
-				}
-
-				if (gameBoard.array.every((element) => element !== '')) {
-					console.log('DRAW !!!');
-					isOver = true;
-				}
-			}
 		}
-	});
+	};
 
-	const restartBtn = document.querySelector('#restartBtn');
-	restartBtn.addEventListener('click', () => {
+	const restart = () => {
 		gameBoard.array = ['', '', '', '', '', '', '', '', ''];
-		displayController.refresh();
 		console.log(gameBoard.array);
-
 		isOver = false;
-		turn = true;
-	});
-})();
+		turn = 'o';
+	};
 
-//---------------------------------------------------------------------------------
+	return { play, restart };
+})();
 
 const displayController = (() => {
 	const refresh = () => {
@@ -102,5 +111,17 @@ const displayController = (() => {
 		}
 	};
 
+	const restartBtn = document.querySelector('#restartBtn');
+	restartBtn.addEventListener('click', () => {
+		gameController.restart();
+		displayController.refresh();
+	});
+
+	const board = document.querySelector('.board');
+	board.addEventListener('click', (e) => {
+		const here = parseInt(e.target.getAttribute('data-index'));
+		gameController.play(here);
+		displayController.refresh();
+	});
 	return { refresh };
 })();
