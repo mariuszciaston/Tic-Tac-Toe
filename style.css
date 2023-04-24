@@ -38,6 +38,11 @@ main {
 	margin: 0 var(--med);
 }
 
+.status-box {
+	font-size: 1.5rem;
+	margin: var(--med);
+}
+
 .board {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
@@ -64,6 +69,10 @@ main {
 	cursor: pointer;
 }
 
+.area:hover{
+	background-color: hsl(0, 0%, 95%);
+}
+
 .border-vertical {
 	border-left: solid 2px black;
 	border-right: solid 2px black;
@@ -78,7 +87,7 @@ main {
 
 .area span {
 	transform: translateY(-11%);
-	pointer-events: none
+	pointer-events: none;
 }
 
 .red {

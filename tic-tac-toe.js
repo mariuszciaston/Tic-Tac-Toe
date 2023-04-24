@@ -3,10 +3,6 @@ const gameBoard = (() => {
 	return { array };
 })();
 
-console.log(gameBoard.array);
-
-//---------------------------------------------------------------------------------
-
 const playerFactory = (sign) => {
 	const placeSign = (place) => {
 		if (gameBoard.array[place] === '') {
@@ -17,15 +13,12 @@ const playerFactory = (sign) => {
 	return { placeSign };
 };
 
-//---------------------------------------------------------------------------------
-
 const gameController = (() => {
 	const player1 = playerFactory('o');
 	const player2 = playerFactory('x');
 
 	let isOver = false;
 	let turn = 'o';
-	console.log('TURN O');
 
 	const whoWon = () => {
 		const winConditions = [
@@ -43,19 +36,19 @@ const gameController = (() => {
 			const condition = winConditions[i];
 
 			if (gameBoard.array[condition[0]] === 'o' && gameBoard.array[condition[1]] === 'o' && gameBoard.array[condition[2]] === 'o') {
-				console.log('O WIN !!!');
+				displayController.setMessage('O has won!');
 				isOver = true;
 			}
 
 			if (gameBoard.array[condition[0]] === 'x' && gameBoard.array[condition[1]] === 'x' && gameBoard.array[condition[2]] === 'x') {
-				console.log('X WIN !!!');
+				displayController.setMessage('X has won!');
 				isOver = true;
 			}
 		}
 
 		if (isOver === false) {
 			if (gameBoard.array.every((element) => element !== '')) {
-				console.log('DRAW !!!');
+				displayController.setMessage("It's a draw!");
 				isOver = true;
 			}
 		}
@@ -66,36 +59,32 @@ const gameController = (() => {
 			if (gameBoard.array[place] === '') {
 				if (turn === 'o') {
 					player1.placeSign(place);
-					console.log(gameBoard.array);
-
 					whoWon();
 
 					if (isOver === false) {
 						turn = 'x';
-						console.log('TURN X');
+						displayController.setMessage('X turn');
 					}
 				} else if (turn === 'x') {
 					player2.placeSign(place);
-					console.log(gameBoard.array);
-
 					whoWon();
 
 					if (isOver === false) {
 						turn = 'o';
-						console.log('TURN O');
+						displayController.setMessage('O turn');
 					}
 				}
 			} else {
-				console.log("can't place sign here, place is already taken");
+				displayController.setMessage('This place is already taken');
 			}
 		}
 	};
 
 	const restart = () => {
 		gameBoard.array = ['', '', '', '', '', '', '', '', ''];
-		console.log(gameBoard.array);
 		isOver = false;
 		turn = 'o';
+		displayController.setMessage("Let's start: O turn");
 	};
 
 	return { play, restart };
@@ -111,17 +100,25 @@ const displayController = (() => {
 		}
 	};
 
-	const restartBtn = document.querySelector('#restartBtn');
-	restartBtn.addEventListener('click', () => {
-		gameController.restart();
-		displayController.refresh();
-	});
-
 	const board = document.querySelector('.board');
 	board.addEventListener('click', (e) => {
 		const here = parseInt(e.target.getAttribute('data-index'));
 		gameController.play(here);
 		displayController.refresh();
 	});
-	return { refresh };
+
+	const restartBtn = document.querySelector('#restartBtn');
+	restartBtn.addEventListener('click', () => {
+		gameController.restart();
+		displayController.refresh();
+	});
+
+	const statusBox = document.querySelector('.status-box');
+	const setMessage = (message) => {
+		statusBox.textContent = message;
+	};
+
+	return { refresh, setMessage, statusBox };
 })();
+
+gameController.restart();
