@@ -20,6 +20,9 @@ const gameController = (() => {
 	let isOver = false;
 	let turn = 'o';
 
+	const vsPlayerBtn = document.querySelector('#vsPlayerBtn');
+	const vsComputerBtn = document.querySelector('#vsComputerBtn');
+
 	const whoWon = () => {
 		const winConditions = [
 			[0, 1, 2],
@@ -55,9 +58,35 @@ const gameController = (() => {
 	};
 
 	const play = (place) => {
-		if (isOver === false) {
-			if (gameBoard.array[place] === '') {
-				if (turn === 'o') {
+		if (vsPlayerBtn.classList.contains('selected')) {
+			if (isOver === false) {
+				if (gameBoard.array[place] === '') {
+					if (turn === 'o') {
+						player1.placeSign(place);
+						whoWon();
+
+						if (isOver === false) {
+							turn = 'x';
+							displayController.setMessage('X turn');
+						}
+					} else if (turn === 'x') {
+						player2.placeSign(place);
+						whoWon();
+
+						if (isOver === false) {
+							turn = 'o';
+							displayController.setMessage('O turn');
+						}
+					}
+				} else {
+					displayController.setMessage('This place is already taken');
+				}
+			}
+		}
+
+		if (vsComputerBtn.classList.contains('selected')) {
+			if (isOver === false) {
+				if (gameBoard.array[place] === '') {
 					player1.placeSign(place);
 					whoWon();
 
@@ -65,17 +94,31 @@ const gameController = (() => {
 						turn = 'x';
 						displayController.setMessage('X turn');
 					}
-				} else if (turn === 'x') {
-					player2.placeSign(place);
+
+					if (vsComputerBtn.classList.contains('selected')) {
+						const emptySpot = [];
+						for (let i = 0; i < 9; i += 1) {
+							if (gameBoard.array[i] === '') {
+								emptySpot.push(i);
+							}
+						}
+						const randomIndex = Math.floor(Math.random() * emptySpot.length);
+						const randomPlace = emptySpot[randomIndex];
+						player2.placeSign(randomPlace);
+						displayController.refresh();
+					} else {
+						player2.placeSign(place);
+					}
 					whoWon();
 
 					if (isOver === false) {
 						turn = 'o';
 						displayController.setMessage('O turn');
 					}
+					// }
+				} else {
+					displayController.setMessage('This place is already taken');
 				}
-			} else {
-				displayController.setMessage('This place is already taken');
 			}
 		}
 	};
@@ -86,6 +129,16 @@ const gameController = (() => {
 		turn = 'o';
 		displayController.setMessage("Let's start: O turn");
 	};
+
+	vsPlayerBtn.addEventListener('click', () => {
+		vsPlayerBtn.classList.add('selected');
+		vsComputerBtn.classList.remove('selected');
+	});
+
+	vsComputerBtn.addEventListener('click', () => {
+		vsComputerBtn.classList.add('selected');
+		vsPlayerBtn.classList.remove('selected');
+	});
 
 	return { play, restart };
 })();
