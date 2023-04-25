@@ -129,12 +129,6 @@ const gameController = (() => {
 
 	const restart = () => {
 		gameBoard.array = ['', '', '', '', '', '', '', '', ''];
-		// gameBoard.array = ['z', 'z', 'z', '', 'o', 'o', 'x', 'x', 'x'];
-
-		// ----------------
-		// whoWon();
-		// displayController.refresh();
-		// ----------------
 		isOver = false;
 		turn = 'o';
 		displayController.setMessage("Let's start: O turn");
@@ -172,6 +166,9 @@ const displayController = (() => {
 
 	const restartBtn = document.querySelector('#restartBtn');
 	restartBtn.addEventListener('click', () => {
+		document.querySelectorAll('.area').forEach((area) => {
+			area.classList.remove('blueWon', 'redWon');
+		});
 		gameController.restart();
 		displayController.refresh();
 	});

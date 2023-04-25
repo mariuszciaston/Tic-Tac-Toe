@@ -70,10 +70,15 @@ main {
 	box-sizing: border-box;
 	cursor: pointer;
 }
-/* 
-.area:hover{
+
+/* .area:hover{
 	background-color: hsl(0, 0%, 95%);
 } */
+
+.blueWon,
+.redWon {
+	transition: background-color 1s ease;
+}
 
 .blueWon {
 	background-color: var(--lightblue);
