@@ -139,17 +139,21 @@ const gameController = (() => {
 	};
 
 	vsPlayerBtn.addEventListener('click', () => {
+		if (!vsPlayerBtn.classList.contains('selected')) {
+			gameController.restart();
+			displayController.refresh();
+		}
 		vsPlayerBtn.classList.add('selected');
 		vsComputerBtn.classList.remove('selected');
-		gameController.restart();
-		displayController.refresh();
 	});
 
 	vsComputerBtn.addEventListener('click', () => {
+		if (!vsComputerBtn.classList.contains('selected')) {
+			gameController.restart();
+			displayController.refresh();
+		}
 		vsComputerBtn.classList.add('selected');
 		vsPlayerBtn.classList.remove('selected');
-		gameController.restart();
-		displayController.refresh();
 	});
 
 	return { play, restart };

@@ -2,8 +2,8 @@
 	--med: 16px;
 	--blue: #3b82f6;
 	--red: #ef4343;
-	--lightblue: #eff6ff;
-	--lightred: #fef2f2;
+	--lightblue: #dbeafe;
+	--lightred: #fee2e2;
 }
 
 html,
@@ -71,39 +71,6 @@ main {
 	cursor: pointer;
 }
 
-
-.area:hover{
-	background-color: hsl(0, 0%, 95%);
-/* cursor: not-allowed; */
-}
-
-.thinking:hover{
-	cursor: wait;
-
-}
-
-/* .blue, .red {
-cursor: not-allowed;
-}
-
-.area > span {
-	width: 100%;
-	text-align: center;
-} */
-
-.blueWon,
-.redWon {
-	transition: background-color 1s ease;
-}
-
-.blueWon {
-	background-color: var(--lightblue);
-}
-
-.redWon {
-	background-color: var(--lightred);
-}
-
 .border-vertical {
 	border-left: solid 2px black;
 	border-right: solid 2px black;
@@ -116,35 +83,91 @@ cursor: not-allowed;
 	border-bottom: solid 2px black;
 }
 
-.area span {
-	transform: translateY(-11%);
-	/* pointer-events: none; */
-
-	/* animation: fadeIn; */
+.area:hover {
+	background-color: hsl(0, 0%, 95%);
 }
 
-/* @keyframes fadeIn{
+.area span {
+	width: 100%;
+	text-align: center;
+}
+
+@keyframes zoomout {
 	from {
-		transform: scale(0);
+		transform: scale(1.5) translateY(-11%);
 		opacity: 0;
-		background-color: red;
-	  }
-	
-	  to {
-		transform: scale(1);
+	}
+	to {
+		transform: scale(1) translateY(-11%);
 		opacity: 1;
-		background-color: blue;
+	}
+}
 
-	  }
+@keyframes zoomin {
+	0% {
+		transform: scale(0) translateY(-11%);
+	}
 
-} */
+	50% {
+		transform: scale(1.33) translateY(-11%);
+	}
 
-.red {
-	color: var(--red);
+	100% {
+		transform: scale(1) translateY(-11%);
+	}
 }
 
 .blue {
 	color: var(--blue);
+	animation: zoomin 0.5s forwards ease;
+}
+
+.red {
+	color: var(--red);
+	animation: zoomout 0.5s forwards ease;
+}
+
+.red:hover,
+.blue:hover {
+	cursor: default;
+}
+
+@keyframes bluethunder {
+	0% {
+		background-color: white;
+	}
+
+	50% {
+		background-color: var(--blue);
+	}
+
+	100% {
+		background-color: var(--lightblue);
+	}
+}
+
+@keyframes redthunder {
+	0% {
+		background-color: white;
+	}
+
+	50% {
+		background-color: var(--red);
+	}
+
+	100% {
+		background-color: var(--lightred);
+	}
+}
+
+.blueWon {
+	background-color: var(--lightblue);
+	animation: bluethunder 0.5s forwards ease;
+}
+
+.redWon {
+	background-color: var(--lightred);
+	animation: redthunder 0.5s forwards ease;
 }
 
 .buttons {
