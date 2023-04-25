@@ -43,7 +43,6 @@ main {
 .status-box {
 	font-size: 1.5rem;
 	margin: var(--med);
-
 	display: flex;
 	align-items: center;
 }
@@ -203,7 +202,6 @@ main {
 	padding: var(--med);
 	margin: var(--med);
 	border-radius: 8px;
-	transition: 0.4s;
 	font-weight: 500;
 	border: 2px solid rgba(0, 0, 0, 0);
 	min-width: calc(100% - 2 * var(--med));
@@ -212,12 +210,14 @@ main {
 
 .buttons .versus {
 	background-color: white;
+	transition: border 0.4s;
 }
 
 .buttons .restart {
 	background-color: hsl(0, 0%, 90%);
 	font-size: 1.5rem;
 	letter-spacing: 1px;
+	transition: background-color 0.4s;
 }
 
 .buttons button:hover {

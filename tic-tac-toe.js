@@ -64,7 +64,7 @@ const gameController = (() => {
 
 		if (isOver === false) {
 			if (gameBoard.array.every((element) => element !== '')) {
-				displayController.setMessage("It's a draw!");
+				displayController.setMessage("O It's a draw! X");
 				isOver = true;
 			}
 		}
@@ -145,9 +145,6 @@ const gameController = (() => {
 		isOver = false;
 		turn = 'o';
 		displayController.setMessage("Let's start: O turn");
-
-		// displayController.setMessage('O turn');
-
 		document.querySelectorAll('.area').forEach((area) => {
 			area.classList.remove('blueWon', 'redWon');
 		});
@@ -200,13 +197,7 @@ const displayController = (() => {
 	const statusBox = document.querySelector('.status-box');
 	const setMessage = (message) => {
 		statusBox.textContent = message;
-
-		if (message.includes('O')) {
-			statusBox.innerHTML = message.replace('O', '<span class="o">&nbsp;O&nbsp;</span> ');
-		}
-		if (message.includes('X')) {
-			statusBox.innerHTML = message.replace('X', '<span class="x">&nbsp;X&nbsp;</span> ');
-		}
+		statusBox.innerHTML = message.replace('O', '<span class="o">&nbsp;O&nbsp;</span>').replace('X', '<span class="x">&nbsp;X&nbsp;</span>');
 	};
 	return { refresh, setMessage, statusBox };
 })();
