@@ -132,16 +132,24 @@ const gameController = (() => {
 		isOver = false;
 		turn = 'o';
 		displayController.setMessage("Let's start: O turn");
+
+		document.querySelectorAll('.area').forEach((area) => {
+			area.classList.remove('blueWon', 'redWon');
+		});
 	};
 
 	vsPlayerBtn.addEventListener('click', () => {
 		vsPlayerBtn.classList.add('selected');
 		vsComputerBtn.classList.remove('selected');
+		gameController.restart();
+		displayController.refresh();
 	});
 
 	vsComputerBtn.addEventListener('click', () => {
 		vsComputerBtn.classList.add('selected');
 		vsPlayerBtn.classList.remove('selected');
+		gameController.restart();
+		displayController.refresh();
 	});
 
 	return { play, restart };
@@ -166,9 +174,6 @@ const displayController = (() => {
 
 	const restartBtn = document.querySelector('#restartBtn');
 	restartBtn.addEventListener('click', () => {
-		document.querySelectorAll('.area').forEach((area) => {
-			area.classList.remove('blueWon', 'redWon');
-		});
 		gameController.restart();
 		displayController.refresh();
 	});

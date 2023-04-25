@@ -71,8 +71,24 @@ main {
 	cursor: pointer;
 }
 
-/* .area:hover{
+
+.area:hover{
 	background-color: hsl(0, 0%, 95%);
+/* cursor: not-allowed; */
+}
+
+.thinking:hover{
+	cursor: wait;
+
+}
+
+/* .blue, .red {
+cursor: not-allowed;
+}
+
+.area > span {
+	width: 100%;
+	text-align: center;
 } */
 
 .blueWon,
@@ -102,8 +118,26 @@ main {
 
 .area span {
 	transform: translateY(-11%);
-	pointer-events: none;
+	/* pointer-events: none; */
+
+	/* animation: fadeIn; */
 }
+
+/* @keyframes fadeIn{
+	from {
+		transform: scale(0);
+		opacity: 0;
+		background-color: red;
+	  }
+	
+	  to {
+		transform: scale(1);
+		opacity: 1;
+		background-color: blue;
+
+	  }
+
+} */
 
 .red {
 	color: var(--red);
