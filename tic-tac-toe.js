@@ -70,6 +70,19 @@ const gameController = (() => {
 		}
 	};
 
+	function takenBy() {
+		document.addEventListener(
+			'click',
+			(e) => {
+				displayController.setMessage(`This place is already taken by ${e.target.textContent.toUpperCase()}`);
+				setTimeout(() => {
+					displayController.setMessage(`${turn.toUpperCase()} turn`);
+				}, 2000);
+			},
+			{ once: true }
+		);
+	}
+
 	const play = (place) => {
 		if (vsPlayerBtn.classList.contains('selected')) {
 			if (isOver === false) {
@@ -92,7 +105,7 @@ const gameController = (() => {
 						}
 					}
 				} else {
-					displayController.setMessage('This place is already taken');
+					takenBy();
 				}
 			}
 		}
@@ -121,7 +134,7 @@ const gameController = (() => {
 						}, 1000);
 					}
 				} else {
-					displayController.setMessage('This place is already taken');
+					takenBy();
 				}
 			}
 		}
@@ -195,7 +208,6 @@ const displayController = (() => {
 			statusBox.innerHTML = message.replace('X', '<span class="x">&nbsp;X&nbsp;</span> ');
 		}
 	};
-
 	return { refresh, setMessage, statusBox };
 })();
 
