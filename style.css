@@ -1,7 +1,9 @@
 :root {
 	--med: 16px;
 	--blue: #3b82f6;
-	--red: #ef4444;
+	--red: #ef4343;
+	--lightblue: #eff6ff;
+	--lightred: #fef2f2;
 }
 
 html,
@@ -68,9 +70,17 @@ main {
 	box-sizing: border-box;
 	cursor: pointer;
 }
-
+/* 
 .area:hover{
 	background-color: hsl(0, 0%, 95%);
+} */
+
+.blueWon {
+	background-color: var(--lightblue);
+}
+
+.redWon {
+	background-color: var(--lightred);
 }
 
 .border-vertical {

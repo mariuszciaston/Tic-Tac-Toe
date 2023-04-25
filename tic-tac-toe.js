@@ -41,11 +41,23 @@ const gameController = (() => {
 			if (gameBoard.array[condition[0]] === 'o' && gameBoard.array[condition[1]] === 'o' && gameBoard.array[condition[2]] === 'o') {
 				displayController.setMessage('O has won!');
 				isOver = true;
+
+				for (let i = 0; i < 3; i += 1) {
+					const winningCondition = document.querySelectorAll('.area')[condition[i]];
+
+					winningCondition.classList.add('blueWon');
+				}
 			}
 
 			if (gameBoard.array[condition[0]] === 'x' && gameBoard.array[condition[1]] === 'x' && gameBoard.array[condition[2]] === 'x') {
 				displayController.setMessage('X has won!');
 				isOver = true;
+
+				for (let i = 0; i < 3; i += 1) {
+					const winningCondition = document.querySelectorAll('.area')[condition[i]];
+
+					winningCondition.classList.add('redWon');
+				}
 			}
 		}
 
