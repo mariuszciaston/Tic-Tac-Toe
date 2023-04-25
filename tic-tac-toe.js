@@ -118,6 +118,8 @@ const gameController = (() => {
 
 					if (isOver === false) {
 						displayController.setMessage('X turn');
+						document.body.appendChild(document.createElement('div')).className = 'wait-wall';
+
 						setTimeout(() => {
 							const emptySpot = [];
 							for (let i = 0; i < 9; i += 1) {
@@ -131,6 +133,7 @@ const gameController = (() => {
 							displayController.setMessage('O turn');
 							displayController.refresh();
 							whoWon();
+							document.querySelector('.wait-wall').remove();
 						}, 1000);
 					}
 				} else {
