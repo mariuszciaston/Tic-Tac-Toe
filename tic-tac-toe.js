@@ -43,20 +43,21 @@ const gameController = (() => {
 				isOver = true;
 
 				for (let i = 0; i < 3; i += 1) {
-					const winningCondition = document.querySelectorAll('.area')[condition[i]];
-
-					winningCondition.classList.add('blueWon');
+					const highlight = document.querySelectorAll('.area')[condition[i]];
+					highlight.classList.add('blueWon');
 				}
-			}
-
-			if (gameBoard.array[condition[0]] === 'x' && gameBoard.array[condition[1]] === 'x' && gameBoard.array[condition[2]] === 'x') {
+			} else if (
+				isOver === false &&
+				gameBoard.array[condition[0]] === 'x' &&
+				gameBoard.array[condition[1]] === 'x' &&
+				gameBoard.array[condition[2]] === 'x'
+			) {
 				displayController.setMessage('X has won!');
 				isOver = true;
 
 				for (let i = 0; i < 3; i += 1) {
-					const winningCondition = document.querySelectorAll('.area')[condition[i]];
-
-					winningCondition.classList.add('redWon');
+					const highlight = document.querySelectorAll('.area')[condition[i]];
+					highlight.classList.add('redWon');
 				}
 			}
 		}
@@ -103,31 +104,22 @@ const gameController = (() => {
 					whoWon();
 
 					if (isOver === false) {
-						turn = 'x';
 						displayController.setMessage('X turn');
-					}
-
-					if (vsComputerBtn.classList.contains('selected')) {
-						const emptySpot = [];
-						for (let i = 0; i < 9; i += 1) {
-							if (gameBoard.array[i] === '') {
-								emptySpot.push(i);
+						setTimeout(() => {
+							const emptySpot = [];
+							for (let i = 0; i < 9; i += 1) {
+								if (gameBoard.array[i] === '') {
+									emptySpot.push(i);
+								}
 							}
-						}
-						const randomIndex = Math.floor(Math.random() * emptySpot.length);
-						const randomPlace = emptySpot[randomIndex];
-						player2.placeSign(randomPlace);
-						displayController.refresh();
-					} else {
-						player2.placeSign(place);
+							const randomIndex = Math.floor(Math.random() * emptySpot.length);
+							const randomPlace = emptySpot[randomIndex];
+							player2.placeSign(randomPlace);
+							displayController.setMessage('O turn');
+							displayController.refresh();
+							whoWon();
+						}, 1000);
 					}
-					whoWon();
-
-					if (isOver === false) {
-						turn = 'o';
-						displayController.setMessage('O turn');
-					}
-					// }
 				} else {
 					displayController.setMessage('This place is already taken');
 				}
@@ -137,6 +129,12 @@ const gameController = (() => {
 
 	const restart = () => {
 		gameBoard.array = ['', '', '', '', '', '', '', '', ''];
+		// gameBoard.array = ['z', 'z', 'z', '', 'o', 'o', 'x', 'x', 'x'];
+
+		// ----------------
+		// whoWon();
+		// displayController.refresh();
+		// ----------------
 		isOver = false;
 		turn = 'o';
 		displayController.setMessage("Let's start: O turn");
