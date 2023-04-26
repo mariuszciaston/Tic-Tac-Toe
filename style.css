@@ -1,9 +1,12 @@
 :root {
-	--med: 16px;
+	--med: 12px;
 	--blue: #3b82f6;
 	--red: #ef4343;
 	--lightblue: #dbeafe;
 	--lightred: #fee2e2;
+	--grey95: hsl(0, 0%, 95%);
+	--grey90: hsl(0, 0%, 90%);
+	--grey80: hsl(0, 0%, 80%);
 }
 
 html,
@@ -21,13 +24,13 @@ body {
 }
 
 header {
-	background-color: hsl(0, 0%, 95%);
+	background-color: var(--grey95);
 	text-align: center;
 }
 
 header h1 {
 	font-weight: 400;
-	font-size: clamp(3rem, 17vw, 5.6rem);
+	font-size: clamp(3rem, 17vw, 4.2rem);
 	margin: var(--med);
 }
 
@@ -41,7 +44,7 @@ main {
 }
 
 .status-box {
-	font-size: 1.5rem;
+	font-size: 1.125rem;
 	margin: var(--med);
 	display: flex;
 	align-items: center;
@@ -50,7 +53,7 @@ main {
 .o,
 .x {
 	font-weight: 500;
-	font-size: 2.25rem;
+	font-size: 1.6875rem;
 }
 
 .o {
@@ -68,10 +71,10 @@ main {
 	min-width: 256px;
 	min-height: 256px;
 	width: 100%;
-	max-width: 480px;
-	max-height: 480px;
 	aspect-ratio: 1/1;
 	margin: var(--med);
+	max-width: 360px;
+	max-height: 360px;
 }
 
 .area {
@@ -80,7 +83,7 @@ main {
 	align-items: center;
 	aspect-ratio: 1/1;
 	overflow: hidden;
-	font-size: clamp(6rem, 35vw, 12rem);
+	font-size: clamp(6rem, 36vw, 9rem);
 	font-weight: 300;
 	width: 100%;
 	box-sizing: border-box;
@@ -88,19 +91,19 @@ main {
 }
 
 .border-vertical {
-	border-left: solid 2px black;
-	border-right: solid 2px black;
+	border-left: solid 1.5px black;
+	border-right: solid 1.5px black;
 }
 .border-center {
-	border: solid 2px black;
+	border: solid 1.5px black;
 }
 .border-horizontal {
-	border-top: solid 2px black;
-	border-bottom: solid 2px black;
+	border-top: solid 1.5px black;
+	border-bottom: solid 1.5px black;
 }
 
 .area:hover {
-	background-color: hsl(0, 0%, 95%);
+	background-color: var(--grey95);
 }
 
 .area span {
@@ -191,7 +194,7 @@ main {
 	grid-template-columns: repeat(3, 1fr);
 	justify-items: center;
 	min-width: 256px;
-	max-width: 480px;
+	max-width: 360px;
 }
 
 .buttons button {
@@ -203,7 +206,7 @@ main {
 	margin: var(--med);
 	border-radius: 8px;
 	font-weight: 500;
-	border: 2px solid rgba(0, 0, 0, 0);
+	border: 1.5px solid rgba(0, 0, 0, 0);
 	min-width: calc(100% - 2 * var(--med));
 	max-width: 100%;
 }
@@ -211,11 +214,12 @@ main {
 .buttons .versus {
 	background-color: white;
 	transition: border 0.4s;
+	font-size: 0.75rem;
 }
 
 .buttons .restart {
-	background-color: hsl(0, 0%, 90%);
-	font-size: 1.5rem;
+	background-color: var(--grey90);
+	font-size: 1.125rem;
 	letter-spacing: 1px;
 	transition: background-color 0.4s;
 }
@@ -225,14 +229,11 @@ main {
 }
 
 .buttons .restart:hover {
-	background-color: hsl(0, 0%, 80%);
+	background-color: var(--grey80);
 }
+.buttons .selected,
 .buttons .versus:hover {
-	border: 2px solid hsl(0, 0%, 80%);
-}
-
-.buttons .selected {
-	border: 2px solid hsl(0, 0%, 80%);
+	border: 1.5px solid var(--grey80);
 }
 
 .wait-wall {
@@ -250,19 +251,19 @@ footer {
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
-	font-size: 0.875rem;
+	font-size: 0.75rem;
 	padding: var(--med);
 }
 
 footer span {
 	display: flex;
 	align-items: center;
-	height: 2.125rem;
+	height: 1.8214rem;
 	white-space: nowrap;
 }
 
 footer .emoji {
-	font-size: 1.625rem;
+	font-size: 1.3928rem;
 }
 
 .fa-github {
