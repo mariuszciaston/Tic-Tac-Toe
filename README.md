@@ -9,5 +9,5 @@ Features:<br>
 • Clean UI<br>
 • Responsive design<br>
 
-[Live Demo](mariuszciaston.github.io/Tic-Tac-Toe) :point_left:
+[Live Demo](https://mariuszciaston.github.io/Tic-Tac-Toe/) :point_left:
 
