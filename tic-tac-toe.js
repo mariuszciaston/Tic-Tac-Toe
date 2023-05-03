@@ -22,6 +22,7 @@ const gameController = (() => {
 
 	const vsPlayerBtn = document.querySelector('#vsPlayerBtn');
 	const vsComputerBtn = document.querySelector('#vsComputerBtn');
+	const areas = document.querySelectorAll('.area');
 
 	const whoWon = () => {
 		const winConditions = [
@@ -43,8 +44,7 @@ const gameController = (() => {
 				isOver = true;
 
 				for (let i = 0; i < 3; i += 1) {
-					const highlight = document.querySelectorAll('.area')[condition[i]];
-					highlight.classList.add('blueWon');
+					areas[condition[i]].classList.add('blueWon');
 				}
 			} else if (
 				isOver === false &&
@@ -56,8 +56,7 @@ const gameController = (() => {
 				isOver = true;
 
 				for (let i = 0; i < 3; i += 1) {
-					const highlight = document.querySelectorAll('.area')[condition[i]];
-					highlight.classList.add('redWon');
+					areas[condition[i]].classList.add('redWon');
 				}
 			}
 		}
@@ -148,7 +147,8 @@ const gameController = (() => {
 		isOver = false;
 		turn = 'o';
 		displayController.setMessage("Let's start: O turn");
-		document.querySelectorAll('.area').forEach((area) => {
+
+		areas.forEach((area) => {
 			area.classList.remove('blueWon', 'redWon');
 		});
 	};
