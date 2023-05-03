@@ -1,6 +1,6 @@
 # Tic-Tac-Toe
 
-Tic Tac Toe game built using module patterns and factory function.
+Tic Tac Toe game built using revealing module patterns and factory function.
 
 Features:<br>
 • Player vs player mode<br>
