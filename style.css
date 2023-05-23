@@ -126,9 +126,11 @@ main {
 
 @keyframes zoomin {
 	0% {
+		transform: translateY(-11%);
+	}
+	1% {
 		transform: scale(0) translateY(-11%);
 	}
-
 	50% {
 		transform: scale(1.33) translateY(-11%);
 	}
