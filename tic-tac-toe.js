@@ -22,6 +22,9 @@ const gameController = (() => {
 
 	const vsPlayerBtn = document.querySelector('#vsPlayerBtn');
 	const vsComputerBtn = document.querySelector('#vsComputerBtn');
+	const easyBtn = document.querySelector('#easyBtn');
+	const hardBtn = document.querySelector('#hardBtn');
+
 	const areas = document.querySelectorAll('.area');
 
 	const whoWon = () => {
@@ -109,7 +112,7 @@ const gameController = (() => {
 			}
 		}
 
-		if (vsComputerBtn.classList.contains('selected')) {
+		if (easyBtn.classList.contains('selected')) {
 			if (isOver === false) {
 				if (gameBoard.array[place] === '') {
 					player1.placeSign(place);
@@ -128,6 +131,41 @@ const gameController = (() => {
 							}
 							const randomIndex = Math.floor(Math.random() * emptySpot.length);
 							const randomPlace = emptySpot[randomIndex];
+							player2.placeSign(randomPlace);
+							displayController.setMessage('O turn');
+							displayController.refresh();
+							whoWon();
+							document.querySelector('.wait-wall').remove();
+						}, 1000);
+					}
+				} else {
+					takenBy();
+				}
+			}
+		}
+
+		if (hardBtn.classList.contains('selected')) {
+			if (isOver === false) {
+				if (gameBoard.array[place] === '') {
+					player1.placeSign(place);
+					whoWon();
+
+					if (isOver === false) {
+						displayController.setMessage('X turn');
+						document.body.appendChild(document.createElement('div')).className = 'wait-wall';
+
+						setTimeout(() => {
+							// add minimax algorithm here
+
+							// const emptySpot = [];
+							// for (let i = 0; i < 9; i += 1) {
+							// 	if (gameBoard.array[i] === '') {
+							// 		emptySpot.push(i);
+							// 	}
+							// }
+							// const randomIndex = Math.floor(Math.random() * emptySpot.length);
+							// const randomPlace = emptySpot[randomIndex];
+
 							player2.placeSign(randomPlace);
 							displayController.setMessage('O turn');
 							displayController.refresh();
@@ -160,6 +198,8 @@ const gameController = (() => {
 		}
 		vsPlayerBtn.classList.add('selected');
 		vsComputerBtn.classList.remove('selected');
+		easyBtn.classList.remove('selected');
+		hardBtn.classList.remove('selected');
 	});
 
 	vsComputerBtn.addEventListener('click', () => {
@@ -168,6 +208,29 @@ const gameController = (() => {
 			displayController.refresh();
 		}
 		vsComputerBtn.classList.add('selected');
+		hardBtn.classList.add('selected');
+		vsPlayerBtn.classList.remove('selected');
+	});
+
+	easyBtn.addEventListener('click', () => {
+		if (!easyBtn.classList.contains('selected')) {
+			gameController.restart();
+			displayController.refresh();
+		}
+		vsComputerBtn.classList.add('selected');
+		easyBtn.classList.add('selected');
+		hardBtn.classList.remove('selected');
+		vsPlayerBtn.classList.remove('selected');
+	});
+
+	hardBtn.addEventListener('click', () => {
+		if (!hardBtn.classList.contains('selected')) {
+			gameController.restart();
+			displayController.refresh();
+		}
+		vsComputerBtn.classList.add('selected');
+		hardBtn.classList.add('selected');
+		easyBtn.classList.remove('selected');
 		vsPlayerBtn.classList.remove('selected');
 	});
 
