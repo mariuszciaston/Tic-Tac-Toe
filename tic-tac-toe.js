@@ -155,18 +155,32 @@ const gameController = (() => {
 						document.body.appendChild(document.createElement('div')).className = 'wait-wall';
 
 						setTimeout(() => {
-							// add minimax algorithm here
+							function bestMove() {
+								let bestScore = -Infinity;
+								let move;
 
-							// const emptySpot = [];
-							// for (let i = 0; i < 9; i += 1) {
-							// 	if (gameBoard.array[i] === '') {
-							// 		emptySpot.push(i);
-							// 	}
-							// }
-							// const randomIndex = Math.floor(Math.random() * emptySpot.length);
-							// const randomPlace = emptySpot[randomIndex];
+								for (let i = 0; i < 9; i += 1) {
+									if (gameBoard.array[i] === '') {
+										gameBoard.array[i] = 'x';
+										const score = minimax(gameBoard.array);
+										gameBoard.array[i] = '';
 
-							player2.placeSign(randomPlace);
+										if (score > bestScore) {
+											bestScore = score;
+											move = i;
+										}
+									}
+								}
+
+								console.log(gameBoard.array);
+
+								function minimax() {
+									return 1;
+								}
+								return move;
+							}
+
+							player2.placeSign(bestMove());
 							displayController.setMessage('O turn');
 							displayController.refresh();
 							whoWon();
