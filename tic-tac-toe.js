@@ -28,6 +28,8 @@ const gameController = (() => {
 	const areas = document.querySelectorAll('.area');
 
 	const whoWon = () => {
+		// console.log('gameBoard.array:', gameBoard.array);
+
 		const winConditions = [
 			[0, 1, 2],
 			[3, 4, 5],
@@ -49,6 +51,7 @@ const gameController = (() => {
 				for (let i = 0; i < 3; i += 1) {
 					areas[condition[i]].classList.add('blueWon');
 				}
+				return 'o';
 			} else if (
 				isOver === false &&
 				gameBoard.array[condition[0]] === 'x' &&
@@ -61,6 +64,8 @@ const gameController = (() => {
 				for (let i = 0; i < 3; i += 1) {
 					areas[condition[i]].classList.add('redWon');
 				}
+
+				return 'x';
 			}
 		}
 
@@ -68,8 +73,11 @@ const gameController = (() => {
 			if (gameBoard.array.every((element) => element !== '')) {
 				displayController.setMessage("O It's a draw! X");
 				isOver = true;
+				return 'tie';
 			}
 		}
+
+		return null;
 	};
 
 	function takenBy() {
@@ -154,38 +162,78 @@ const gameController = (() => {
 						displayController.setMessage('X turn');
 						document.body.appendChild(document.createElement('div')).className = 'wait-wall';
 
-						setTimeout(() => {
-							function bestMove() {
+						// setTimeout(() => {
+
+						const scores = {
+							x: 1,
+							o: -1,
+							tie: 0,
+						};
+
+						function minimax(board, depth, isMaximizing) {
+							let result = whoWon(board);
+
+							console.log(result);
+							if (result !== null) {
+								let score = scores[result];
+								return score;
+							}
+
+							if (isMaximizing) {
 								let bestScore = -Infinity;
-								let move;
 
-								for (let i = 0; i < 9; i += 1) {
-									if (gameBoard.array[i] === '') {
-										gameBoard.array[i] = 'x';
-										const score = minimax(gameBoard.array);
-										gameBoard.array[i] = '';
+								for (let i = 0; i < 9; i++) {
+									if (board[i] === '') {
+										board[i] = 'x';
+										let score = minimax(board, depth + 1, false);
+										board[i] = '';
 
-										if (score > bestScore) {
-											bestScore = score;
-											move = i;
-										}
+										bestScore = Math.max(score, bestScore);
 									}
 								}
 
-								console.log(gameBoard.array);
+								return bestScore;
+							} else {
+								let bestScore = Infinity;
 
-								function minimax() {
-									return 1;
+								for (let i = 0; i < 9; i++) {
+									if (board[i] === '') {
+										board[i] = 'o';
+										let score = minimax(board, depth + 1, true);
+										board[i] = '';
+
+										bestScore = Math.min(score, bestScore);
+									}
 								}
-								return move;
-							}
 
-							player2.placeSign(bestMove());
-							displayController.setMessage('O turn');
-							displayController.refresh();
-							whoWon();
-							document.querySelector('.wait-wall').remove();
-						}, 1000);
+								return bestScore;
+							}
+						}
+
+						function bestMove() {
+							let bestScore = -Infinity;
+							let move;
+							for (let i = 0; i < 9; i++) {
+								if (gameBoard.array[i] === '') {
+									gameBoard.array[i] = 'x';
+									let score = minimax(gameBoard.array, 0, false);
+									gameBoard.array[i] = '';
+									if (score > bestScore) {
+										bestScore = score;
+										move = i;
+									}
+								}
+							}
+							return move;
+						}
+
+						player2.placeSign(bestMove());
+						displayController.setMessage('O turn');
+						displayController.refresh();
+						whoWon();
+						document.querySelector('.wait-wall').remove();
+
+						// }, 1000);
 					}
 				} else {
 					takenBy();
