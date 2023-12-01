@@ -1,32 +1,30 @@
-const gameBoard = (() => {
-	const array = ['', '', '', '', '', '', '', '', ''];
-	return { array };
-})();
-
-const playerFactory = (sign) => {
-	const placeSign = (place) => {
-		if (gameBoard.array[place] === '') {
-			gameBoard.array[place] = sign;
-		}
-	};
-
-	return { placeSign };
-};
+let gameBoard = Array(9).fill('');
 
 const gameController = (() => {
+	const playerFactory = (sign) => {
+		const placeSign = (place) => {
+			if (gameBoard[place] === '') {
+				gameBoard[place] = sign;
+			}
+		};
+
+		return { placeSign };
+	};
+
 	const player1 = playerFactory('o');
 	const player2 = playerFactory('x');
 
 	let isOver = false;
 	let turn = 'o';
 
+	const areas = document.querySelectorAll('.area');
 	const vsPlayerBtn = document.querySelector('#vsPlayerBtn');
 	const vsComputerBtn = document.querySelector('#vsComputerBtn');
 	const easyBtn = document.querySelector('#easyBtn');
 	const mediumBtn = document.querySelector('#mediumBtn');
 	const hardBtn = document.querySelector('#hardBtn');
 
-	const areas = document.querySelectorAll('.area');
+	// ##############################################################################################
 
 	const whoWon = () => {
 		const winConditions = [
@@ -43,20 +41,15 @@ const gameController = (() => {
 		for (let i = 0; i < winConditions.length; i += 1) {
 			const condition = winConditions[i];
 
-			if (gameBoard.array[condition[0]] === 'o' && gameBoard.array[condition[1]] === 'o' && gameBoard.array[condition[2]] === 'o') {
+			if (gameBoard[condition[0]] === 'o' && gameBoard[condition[1]] === 'o' && gameBoard[condition[2]] === 'o') {
 				displayController.setMessage('O has won!');
 				isOver = true;
 
 				for (let i = 0; i < 3; i += 1) {
 					areas[condition[i]].classList.add('blueWon');
 				}
-				return 'o';
-			} else if (
-				isOver === false &&
-				gameBoard.array[condition[0]] === 'x' &&
-				gameBoard.array[condition[1]] === 'x' &&
-				gameBoard.array[condition[2]] === 'x'
-			) {
+				// return 'o';
+			} else if (isOver === false && gameBoard[condition[0]] === 'x' && gameBoard[condition[1]] === 'x' && gameBoard[condition[2]] === 'x') {
 				displayController.setMessage('X has won!');
 				isOver = true;
 
@@ -64,19 +57,19 @@ const gameController = (() => {
 					areas[condition[i]].classList.add('redWon');
 				}
 
-				return 'x';
+				// return 'x';
 			}
 		}
 
 		if (isOver === false) {
-			if (gameBoard.array.every((element) => element !== '')) {
+			if (gameBoard.every((element) => element !== '')) {
 				displayController.setMessage("O It's a draw! X");
 				isOver = true;
-				return 'tie';
+				// return 'tie';
 			}
 		}
 
-		return null;
+		// return null;
 	};
 
 	const checkWinner = (board) => {
@@ -108,23 +101,38 @@ const gameController = (() => {
 		return null;
 	};
 
-	function takenBy() {
-		document.addEventListener(
-			'click',
-			(e) => {
-				displayController.setMessage(`This place is already taken by ${e.target.textContent.toUpperCase()}`);
-				setTimeout(() => {
-					displayController.setMessage(`${turn.toUpperCase()} turn`);
-				}, 2000);
-			},
-			{ once: true }
-		);
-	}
+	// const whoWon2 = () => {
+
+	// 	if (checkWinner(gameBoard) === 'o' ){
+	// 		displayController.setMessage('O has won!');
+	// 		isOver = true;
+	// 		for (let i = 0; i < 3; i += 1) {
+	// 			areas[condition[i]].classList.add('blueWon');
+	// 		}
+	// 	}
+	// 	if (checkWinner(gameBoard) === 'x' ){
+	// 		displayController.setMessage('X has won!');
+	// 		isOver = true;
+
+	// 		for (let i = 0; i < 3; i += 1) {
+	// 			areas[condition[i]].classList.add('redWon');
+	// 		}
+	// 			}
+
+	// 							if (checkWinner(gameBoard) === 'tie' ){
+	// 								displayController.setMessage("O It's a draw! X");
+	// 								isOver = true;
+	// 							}
+
+	// 	if (checkWinner(gameBoard) === null){
+	// isOver = false;}
+
+	// 	}
 
 	const play = (place) => {
 		if (vsPlayerBtn.classList.contains('selected')) {
 			if (isOver === false) {
-				if (gameBoard.array[place] === '') {
+				if (gameBoard[place] === '') {
 					if (turn === 'o') {
 						player1.placeSign(place);
 						whoWon();
@@ -143,290 +151,175 @@ const gameController = (() => {
 						}
 					}
 				} else {
-					takenBy();
+					displayController.takenBy();
 				}
 			}
 		}
 
-		if (easyBtn.classList.contains('selected')) {
-			if (isOver === false) {
-				if (gameBoard.array[place] === '') {
-					player1.placeSign(place);
-					whoWon();
+		// ##############################################################################################
 
-					if (isOver === false) {
-						displayController.setMessage('X turn');
-						document.body.appendChild(document.createElement('div')).className = 'wait-wall';
+		function placeSignAndCheckWinner(player, place) {
+			if (gameBoard[place] === '') {
+				player.placeSign(place);
 
-						setTimeout(() => {
-							const emptySpot = [];
-							for (let i = 0; i < 9; i += 1) {
-								if (gameBoard.array[i] === '') {
-									emptySpot.push(i);
-								}
-							}
-							const randomIndex = Math.floor(Math.random() * emptySpot.length);
-							const randomPlace = emptySpot[randomIndex];
-							player2.placeSign(randomPlace);
-							displayController.setMessage('O turn');
-							displayController.refresh();
-							whoWon();
-							document.querySelector('.wait-wall').remove();
-						}, 1000);
+				whoWon();
+
+				return true;
+			} else {
+				displayController.takenBy();
+				return false;
+			}
+		}
+
+		function randomMove() {
+			const emptySpot = [];
+			for (let i = 0; i < 9; i += 1) {
+				if (gameBoard[i] === '') {
+					emptySpot.push(i);
+				}
+			}
+			const randomIndex = Math.floor(Math.random() * emptySpot.length);
+			const randomPlace = emptySpot[randomIndex];
+			player2.placeSign(randomPlace);
+		}
+
+		const scores = {
+			x: 1,
+			o: -1,
+			tie: 0,
+		};
+
+		function minimax(board, depth, isMaximizing) {
+			let result = checkWinner(board);
+
+			if (result !== null) {
+				let score = scores[result];
+				return score;
+			}
+
+			if (isMaximizing) {
+				let bestScore = -Infinity;
+
+				for (let i = 0; i < 9; i++) {
+					if (board[i] === '') {
+						board[i] = 'x';
+
+						let score = minimax(board, depth + 1, false);
+						board[i] = '';
+
+						bestScore = Math.max(score, bestScore);
 					}
-				} else {
-					takenBy();
 				}
-			}
-		}
 
-		if (mediumBtn.classList.contains('selected')) {
-			if (isOver === false) {
-				if (gameBoard.array[place] === '') {
-					player1.placeSign(place);
-					whoWon();
+				return bestScore;
+			} else {
+				let bestScore = Infinity;
 
-					if (isOver === false) {
-						displayController.setMessage('X turn');
-						document.body.appendChild(document.createElement('div')).className = 'wait-wall';
+				for (let i = 0; i < 9; i++) {
+					if (board[i] === '') {
+						board[i] = 'o';
 
-						const scores = {
-							x: 1,
-							o: -1,
-							tie: 0,
-						};
+						let score = minimax(board, depth + 1, true);
+						board[i] = '';
 
-						function minimax(board, depth, isMaximizing) {
-							let result = checkWinner(board);
-
-							if (result !== null) {
-								let score = scores[result];
-								return score;
-							}
-
-							if (isMaximizing) {
-								let bestScore = -Infinity;
-
-								for (let i = 0; i < 9; i++) {
-									if (board[i] === '') {
-										board[i] = 'x';
-
-										let score = minimax(board, depth + 1, false);
-										board[i] = '';
-
-										bestScore = Math.max(score, bestScore);
-									}
-								}
-
-								return bestScore;
-							} else {
-								let bestScore = Infinity;
-
-								for (let i = 0; i < 9; i++) {
-									if (board[i] === '') {
-										board[i] = 'o';
-
-										let score = minimax(board, depth + 1, true);
-										board[i] = '';
-
-										bestScore = Math.min(score, bestScore);
-									}
-								}
-
-								return bestScore;
-							}
-						}
-
-						function bestMove() {
-							let bestScore = -Infinity;
-							let moves = [];
-							for (let i = 0; i < 9; i++) {
-								if (gameBoard.array[i] === '') {
-									gameBoard.array[i] = 'x';
-
-									let score = minimax(gameBoard.array, 0, false);
-
-									gameBoard.array[i] = '';
-
-									if (score > bestScore) {
-										bestScore = score;
-										moves = [i];
-									} else if (score === bestScore) {
-										moves.push(i);
-									}
-								}
-							}
-							let move = moves[Math.floor(Math.random() * moves.length)];
-							return move;
-						}
-
-						function immediateWinMove() {
-							for (let i = 0; i < 9; i++) {
-								if (gameBoard.array[i] === '') {
-									gameBoard.array[i] = 'x';
-
-									if (checkWinner(gameBoard.array) === 'x') {
-										gameBoard.array[i] = '';
-										return i;
-									}
-									gameBoard.array[i] = '';
-								}
-							}
-							return -1;
-						}
-
-						setTimeout(() => {
-							if (Math.random() < 0.5) {
-								let winMove = immediateWinMove();
-								if (winMove !== -1) {
-									player2.placeSign(winMove);
-								} else {
-									player2.placeSign(bestMove());
-								}
-							} else {
-								const emptySpot = [];
-								for (let i = 0; i < 9; i += 1) {
-									if (gameBoard.array[i] === '') {
-										emptySpot.push(i);
-									}
-								}
-								const randomIndex = Math.floor(Math.random() * emptySpot.length);
-								const randomPlace = emptySpot[randomIndex];
-								player2.placeSign(randomPlace);
-							}
-
-							displayController.setMessage('O turn');
-							displayController.refresh();
-							whoWon();
-							document.querySelector('.wait-wall').remove();
-						}, 1000);
+						bestScore = Math.min(score, bestScore);
 					}
-				} else {
-					takenBy();
 				}
+
+				return bestScore;
 			}
 		}
 
-		if (hardBtn.classList.contains('selected')) {
-			if (isOver === false) {
-				if (gameBoard.array[place] === '') {
-					player1.placeSign(place);
-					whoWon();
+		function bestMove() {
+			let bestScore = -Infinity;
+			let moves = [];
+			for (let i = 0; i < 9; i++) {
+				if (gameBoard[i] === '') {
+					gameBoard[i] = 'x';
 
-					if (isOver === false) {
-						displayController.setMessage('X turn');
-						document.body.appendChild(document.createElement('div')).className = 'wait-wall';
+					let score = minimax(gameBoard, 0, false);
 
-						setTimeout(() => {
-							const scores = {
-								x: 1,
-								o: -1,
-								tie: 0,
-							};
+					gameBoard[i] = '';
 
-							function minimax(board, depth, isMaximizing) {
-								let result = checkWinner(board);
-
-								if (result !== null) {
-									let score = scores[result];
-									return score;
-								}
-
-								if (isMaximizing) {
-									let bestScore = -Infinity;
-
-									for (let i = 0; i < 9; i++) {
-										if (board[i] === '') {
-											board[i] = 'x';
-
-											let score = minimax(board, depth + 1, false);
-											board[i] = '';
-
-											bestScore = Math.max(score, bestScore);
-										}
-									}
-
-									return bestScore;
-								} else {
-									let bestScore = Infinity;
-
-									for (let i = 0; i < 9; i++) {
-										if (board[i] === '') {
-											board[i] = 'o';
-
-											let score = minimax(board, depth + 1, true);
-											board[i] = '';
-
-											bestScore = Math.min(score, bestScore);
-										}
-									}
-
-									return bestScore;
-								}
-							}
-
-							function bestMove() {
-								let bestScore = -Infinity;
-								let moves = [];
-								for (let i = 0; i < 9; i++) {
-									if (gameBoard.array[i] === '') {
-										gameBoard.array[i] = 'x';
-
-										let score = minimax(gameBoard.array, 0, false);
-
-										gameBoard.array[i] = '';
-
-										if (score > bestScore) {
-											bestScore = score;
-											moves = [i];
-										} else if (score === bestScore) {
-											moves.push(i);
-										}
-									}
-								}
-								let move = moves[Math.floor(Math.random() * moves.length)];
-								return move;
-							}
-
-							function immediateWinMove() {
-								for (let i = 0; i < 9; i++) {
-									if (gameBoard.array[i] === '') {
-										gameBoard.array[i] = 'x';
-
-										if (checkWinner(gameBoard.array) === 'x') {
-											gameBoard.array[i] = '';
-											return i;
-										}
-										gameBoard.array[i] = '';
-									}
-								}
-								return -1;
-							}
-
-							let winMove = immediateWinMove();
-							if (winMove !== -1) {
-								player2.placeSign(winMove);
-							} else {
-								player2.placeSign(bestMove());
-							}
-
-							displayController.setMessage('O turn');
-							displayController.refresh();
-							whoWon();
-							document.querySelector('.wait-wall').remove();
-						}, 1000);
+					if (score > bestScore) {
+						bestScore = score;
+						moves = [i];
+					} else if (score === bestScore) {
+						moves.push(i);
 					}
-				} else {
-					takenBy();
+				}
+			}
+			let move = moves[Math.floor(Math.random() * moves.length)];
+			return move;
+		}
+
+		function immediateWinMove() {
+			for (let i = 0; i < 9; i++) {
+				if (gameBoard[i] === '') {
+					gameBoard[i] = 'x';
+
+					if (checkWinner(gameBoard) === 'x') {
+						gameBoard[i] = '';
+						return i;
+					}
+					gameBoard[i] = '';
+				}
+			}
+			return -1;
+		}
+
+		function makeMove(difficultyBtn, place) {
+			if (difficultyBtn.classList.contains('selected')) {
+				if (isOver === false) {
+					if (placeSignAndCheckWinner(player1, place)) {
+						if (isOver === false) {
+							displayController.setMessage('X turn');
+							document.body.appendChild(document.createElement('div')).className = 'wait-wall';
+
+							setTimeout(() => {
+								if (difficultyBtn === easyBtn) {
+									randomMove();
+								} else if (difficultyBtn === mediumBtn) {
+									if (Math.random() < 0.5) {
+										let winMove = immediateWinMove();
+										if (winMove !== -1) {
+											player2.placeSign(winMove);
+										} else {
+											player2.placeSign(bestMove());
+										}
+									} else {
+										randomMove();
+									}
+								} else if (difficultyBtn === hardBtn) {
+									let winMove = immediateWinMove();
+									if (winMove !== -1) {
+										player2.placeSign(winMove);
+									} else {
+										player2.placeSign(bestMove());
+									}
+								}
+
+								displayController.setMessage('O turn');
+								displayController.refresh();
+								whoWon();
+								document.querySelector('.wait-wall').remove();
+							}, 1000);
+						}
+					}
 				}
 			}
 		}
+
+		makeMove(easyBtn, place);
+		makeMove(mediumBtn, place);
+		makeMove(hardBtn, place);
 	};
 
 	const restart = () => {
-		gameBoard.array = ['', '', '', '', '', '', '', '', ''];
+		gameBoard = Array(9).fill('');
 		isOver = false;
 		turn = 'o';
+
 		displayController.setMessage("Let's start: O turn");
 
 		areas.forEach((area) => {
@@ -434,98 +327,86 @@ const gameController = (() => {
 		});
 	};
 
-	vsPlayerBtn.addEventListener('click', () => {
-		if (!vsPlayerBtn.classList.contains('selected')) {
-			gameController.restart();
+	const buttons = [vsPlayerBtn, vsComputerBtn, easyBtn, mediumBtn, hardBtn];
+
+	function resetButtons() {
+		buttons.forEach((btn) => {
+			btn.classList.remove('selected');
+		});
+	}
+
+	function setButton(btn) {
+		if (!btn.classList.contains('selected')) {
+			restart();
 			displayController.refresh();
 		}
-		vsPlayerBtn.classList.add('selected');
-		vsComputerBtn.classList.remove('selected');
-		easyBtn.classList.remove('selected');
-		mediumBtn.classList.remove('selected');
-		hardBtn.classList.remove('selected');
-	});
+		btn.classList.add('selected');
+	}
 
-	vsComputerBtn.addEventListener('click', () => {
-		if (!vsComputerBtn.classList.contains('selected')) {
-			gameController.restart();
-			displayController.refresh();
-		}
-		vsComputerBtn.classList.add('selected');
-		easyBtn.classList.remove('selected');
-		mediumBtn.classList.add('selected');
-		hardBtn.classList.remove('selected');
-		vsPlayerBtn.classList.remove('selected');
-	});
+	function setupButtons(button, selectedButtons) {
+		button.addEventListener('click', () => {
+			resetButtons();
+			selectedButtons.forEach(setButton);
+		});
+	}
 
-	easyBtn.addEventListener('click', () => {
-		if (!easyBtn.classList.contains('selected')) {
-			gameController.restart();
-			displayController.refresh();
-		}
-		vsComputerBtn.classList.add('selected');
-		easyBtn.classList.add('selected');
-		mediumBtn.classList.remove('selected');
-		hardBtn.classList.remove('selected');
-		vsPlayerBtn.classList.remove('selected');
-	});
+	setupButtons(vsPlayerBtn, [vsPlayerBtn]);
+	setupButtons(vsComputerBtn, [vsComputerBtn, hardBtn]);
+	setupButtons(easyBtn, [vsComputerBtn, easyBtn]);
+	setupButtons(mediumBtn, [vsComputerBtn, mediumBtn]);
+	setupButtons(hardBtn, [vsComputerBtn, hardBtn]);
 
-	mediumBtn.addEventListener('click', () => {
-		if (!mediumBtn.classList.contains('selected')) {
-			gameController.restart();
-			displayController.refresh();
-		}
-		vsComputerBtn.classList.add('selected');
-		easyBtn.classList.remove('selected');
-		mediumBtn.classList.add('selected');
-		hardBtn.classList.remove('selected');
-		vsPlayerBtn.classList.remove('selected');
-	});
-
-	hardBtn.addEventListener('click', () => {
-		if (!hardBtn.classList.contains('selected')) {
-			gameController.restart();
-			displayController.refresh();
-		}
-		vsComputerBtn.classList.add('selected');
-		easyBtn.classList.remove('selected');
-		mediumBtn.classList.remove('selected');
-		hardBtn.classList.add('selected');
-		vsPlayerBtn.classList.remove('selected');
-	});
-
-	return { play, restart };
+	return { play, restart, turn };
 })();
 
 const displayController = (() => {
-	const refresh = () => {
+	const statusBox = document.querySelector('.status-box');
+	const board = document.querySelector('.board');
+	const restartBtn = document.querySelector('#restartBtn');
+
+	function refresh() {
 		for (let i = 0; i < 9; i += 1) {
 			const area = document.querySelector(`[data-index="${i}"] > span`);
-			area.textContent = gameBoard.array[i];
+			area.textContent = gameBoard[i];
+
+			// console.log(gameController.gameBoard);
+			// area.textContent = gameController.gameBoard[i];
+
 			area.classList.toggle('red', area.textContent === 'x');
 			area.classList.toggle('blue', area.textContent === 'o');
 		}
-	};
+	}
 
-	const board = document.querySelector('.board');
-	board.addEventListener('click', (e) => {
-		const here = parseInt(e.target.getAttribute('data-index'));
-		gameController.play(here);
-		displayController.refresh();
-	});
-
-	const restartBtn = document.querySelector('#restartBtn');
-	restartBtn.addEventListener('click', () => {
-		gameController.restart();
-		displayController.refresh();
-	});
-
-	const statusBox = document.querySelector('.status-box');
 	const setMessage = (message) => {
 		statusBox.textContent = message;
 		statusBox.innerHTML = message.replace('O', '<span class="o">&nbsp;O&nbsp;</span>').replace('X', '<span class="x">&nbsp;X&nbsp;</span>');
 	};
-	return { refresh, setMessage, statusBox };
+
+	function takenBy() {
+		document.addEventListener(
+			'click',
+			(e) => {
+				setMessage(`This place is already taken by ${e.target.textContent.toUpperCase()}`);
+				setTimeout(() => {
+					setMessage(`${gameController.turn.toUpperCase()} turn`);
+				}, 2000);
+			},
+			{ once: true }
+		);
+	}
+
+	board.addEventListener('click', (e) => {
+		const here = parseInt(e.target.getAttribute('data-index'));
+		gameController.play(here);
+		refresh();
+	});
+
+	restartBtn.addEventListener('click', () => {
+		gameController.restart();
+		refresh();
+	});
+
+	return { refresh, setMessage, statusBox, takenBy };
 })();
 
 gameController.restart();
