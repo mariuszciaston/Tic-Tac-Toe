@@ -23,6 +23,7 @@ const gameController = (() => {
 	const vsPlayerBtn = document.querySelector('#vsPlayerBtn');
 	const vsComputerBtn = document.querySelector('#vsComputerBtn');
 	const easyBtn = document.querySelector('#easyBtn');
+	const mediumBtn = document.querySelector('#mediumBtn');
 	const hardBtn = document.querySelector('#hardBtn');
 
 	const areas = document.querySelectorAll('.area');
@@ -83,7 +84,6 @@ const gameController = (() => {
 			[0, 1, 2],
 			[3, 4, 5],
 			[6, 7, 8],
-
 			[0, 3, 6],
 			[1, 4, 7],
 			[2, 5, 8],
@@ -168,6 +168,133 @@ const gameController = (() => {
 							const randomIndex = Math.floor(Math.random() * emptySpot.length);
 							const randomPlace = emptySpot[randomIndex];
 							player2.placeSign(randomPlace);
+							displayController.setMessage('O turn');
+							displayController.refresh();
+							whoWon();
+							document.querySelector('.wait-wall').remove();
+						}, 1000);
+					}
+				} else {
+					takenBy();
+				}
+			}
+		}
+
+		if (mediumBtn.classList.contains('selected')) {
+			if (isOver === false) {
+				if (gameBoard.array[place] === '') {
+					player1.placeSign(place);
+					whoWon();
+
+					if (isOver === false) {
+						displayController.setMessage('X turn');
+						document.body.appendChild(document.createElement('div')).className = 'wait-wall';
+
+						const scores = {
+							x: 1,
+							o: -1,
+							tie: 0,
+						};
+
+						function minimax(board, depth, isMaximizing) {
+							let result = checkWinner(board);
+
+							if (result !== null) {
+								let score = scores[result];
+								return score;
+							}
+
+							if (isMaximizing) {
+								let bestScore = -Infinity;
+
+								for (let i = 0; i < 9; i++) {
+									if (board[i] === '') {
+										board[i] = 'x';
+
+										let score = minimax(board, depth + 1, false);
+										board[i] = '';
+
+										bestScore = Math.max(score, bestScore);
+									}
+								}
+
+								return bestScore;
+							} else {
+								let bestScore = Infinity;
+
+								for (let i = 0; i < 9; i++) {
+									if (board[i] === '') {
+										board[i] = 'o';
+
+										let score = minimax(board, depth + 1, true);
+										board[i] = '';
+
+										bestScore = Math.min(score, bestScore);
+									}
+								}
+
+								return bestScore;
+							}
+						}
+
+						function bestMove() {
+							let bestScore = -Infinity;
+							let moves = [];
+							for (let i = 0; i < 9; i++) {
+								if (gameBoard.array[i] === '') {
+									gameBoard.array[i] = 'x';
+
+									let score = minimax(gameBoard.array, 0, false);
+
+									gameBoard.array[i] = '';
+
+									if (score > bestScore) {
+										bestScore = score;
+										moves = [i];
+									} else if (score === bestScore) {
+										moves.push(i);
+									}
+								}
+							}
+							let move = moves[Math.floor(Math.random() * moves.length)];
+							return move;
+						}
+
+						function immediateWinMove() {
+							for (let i = 0; i < 9; i++) {
+								if (gameBoard.array[i] === '') {
+									gameBoard.array[i] = 'x';
+
+									if (checkWinner(gameBoard.array) === 'x') {
+										gameBoard.array[i] = '';
+										return i;
+									}
+									gameBoard.array[i] = '';
+								}
+							}
+							return -1;
+						}
+
+						setTimeout(() => {
+							if (Math.random() < 0.5) {
+								let winMove = immediateWinMove();
+								if (winMove !== -1) {
+									player2.placeSign(winMove);
+								} else {
+									player2.placeSign(bestMove());
+								}
+							} else {
+								const emptySpot = [];
+								for (let i = 0; i < 9; i += 1) {
+									if (gameBoard.array[i] === '') {
+										emptySpot.push(i);
+									}
+								}
+								const randomIndex = Math.floor(Math.random() * emptySpot.length);
+								const randomPlace = emptySpot[randomIndex];
+								player2.placeSign(randomPlace);
+							}
+
 							displayController.setMessage('O turn');
 							displayController.refresh();
 							whoWon();
@@ -315,6 +442,7 @@ const gameController = (() => {
 		vsPlayerBtn.classList.add('selected');
 		vsComputerBtn.classList.remove('selected');
 		easyBtn.classList.remove('selected');
+		mediumBtn.classList.remove('selected');
 		hardBtn.classList.remove('selected');
 	});
 
@@ -324,7 +452,9 @@ const gameController = (() => {
 			displayController.refresh();
 		}
 		vsComputerBtn.classList.add('selected');
-		hardBtn.classList.add('selected');
+		easyBtn.classList.remove('selected');
+		mediumBtn.classList.add('selected');
+		hardBtn.classList.remove('selected');
 		vsPlayerBtn.classList.remove('selected');
 	});
 
@@ -335,6 +465,19 @@ const gameController = (() => {
 		}
 		vsComputerBtn.classList.add('selected');
 		easyBtn.classList.add('selected');
+		mediumBtn.classList.remove('selected');
+		hardBtn.classList.remove('selected');
+		vsPlayerBtn.classList.remove('selected');
+	});
+
+	mediumBtn.addEventListener('click', () => {
+		if (!mediumBtn.classList.contains('selected')) {
+			gameController.restart();
+			displayController.refresh();
+		}
+		vsComputerBtn.classList.add('selected');
+		easyBtn.classList.remove('selected');
+		mediumBtn.classList.add('selected');
 		hardBtn.classList.remove('selected');
 		vsPlayerBtn.classList.remove('selected');
 	});
@@ -345,8 +488,9 @@ const gameController = (() => {
 			displayController.refresh();
 		}
 		vsComputerBtn.classList.add('selected');
-		hardBtn.classList.add('selected');
 		easyBtn.classList.remove('selected');
+		mediumBtn.classList.remove('selected');
+		hardBtn.classList.add('selected');
 		vsPlayerBtn.classList.remove('selected');
 	});
 
