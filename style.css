@@ -1,9 +1,18 @@
 :root {
+	--small: 6px;
 	--med: 12px;
+	--green: #22c55e;
+	--yellow: #eab308;
+	--red: #ef4444;
 	--blue: #3b82f6;
-	--red: #ef4343;
-	--lightblue: #dbeafe;
-	--lightred: #fee2e2;
+
+	--lightRed: #fee2e2;
+	--lightBlue: #dbeafe;
+
+	--veryLightGreen: #f0fdf4;
+	--veryLightYellow: #fefce8;
+	--veryLightRed: #fef2f2;
+
 	--grey95: hsl(0, 0%, 95%);
 	--grey90: hsl(0, 0%, 90%);
 	--grey80: hsl(0, 0%, 80%);
@@ -165,7 +174,7 @@ main {
 	}
 
 	100% {
-		background-color: var(--lightblue);
+		background-color: var(--lightBlue);
 	}
 }
 
@@ -179,17 +188,17 @@ main {
 	}
 
 	100% {
-		background-color: var(--lightred);
+		background-color: var(--lightRed);
 	}
 }
 
 .blueWon {
-	background-color: var(--lightblue);
+	background-color: var(--lightBlue);
 	animation: bluethunder 0.5s forwards ease;
 }
 
 .redWon {
-	background-color: var(--lightred);
+	background-color: var(--lightRed);
 	animation: redthunder 0.5s forwards ease;
 }
 
@@ -199,6 +208,7 @@ main {
 	justify-items: center;
 	min-width: 256px;
 	max-width: 360px;
+	width: 100%;
 }
 
 .buttons button {
@@ -208,17 +218,17 @@ main {
 	align-items: center;
 	overflow: hidden;
 	padding: var(--med);
-	margin: var(--med);
+	margin: var(--small);
 	border-radius: 8px;
 	font-weight: 500;
 	border: 1.5px solid rgba(0, 0, 0, 0);
-	min-width: calc(100% - 2 * var(--med));
+	width: calc(100% - 2 * var(--small));
 	max-width: 100%;
 }
 
 .buttons .versus {
 	background-color: white;
-	transition: border 0.4s;
+	transition: border 0.4s, background-color 0.4s;
 	font-size: 0.875rem;
 }
 
@@ -236,9 +246,43 @@ main {
 .buttons .restart:hover {
 	background-color: var(--grey80);
 }
-.buttons .selected,
+.buttons .versus.selected,
 .buttons .versus:hover {
 	border: 1.5px solid var(--grey80);
+}
+
+.buttons .mode {
+	background-color: white;
+	border: none;
+	transition: border 0.4s, background-color 0.4s;
+	font-size: 0.875rem;
+}
+
+#easyBtn {
+	color: var(--green);
+}
+
+#mediumBtn {
+	color: var(--yellow);
+}
+
+#hardBtn {
+	color: var(--red);
+}
+
+#easyBtn.selected,
+#easyBtn:hover {
+	background-color: var(--veryLightGreen);
+}
+
+#mediumBtn.selected,
+#mediumBtn:hover {
+	background-color: var(--veryLightYellow);
+}
+
+#hardBtn.selected,
+#hardBtn:hover {
+	background-color: var(--veryLightRed);
 }
 
 .wait-wall {
