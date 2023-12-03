@@ -1,5 +1,6 @@
 let gameBoard = Array(9).fill('');
 let isOver = false;
+let turn = 'o';
 
 const gameController = (() => {
 	const playerFactory = (sign) => {
@@ -14,15 +15,6 @@ const gameController = (() => {
 
 	const player1 = playerFactory('o');
 	const player2 = playerFactory('x');
-
-	let turn = 'o';
-
-	const areas = document.querySelectorAll('.area');
-	const vsPlayerBtn = document.querySelector('#vsPlayerBtn');
-	const vsComputerBtn = document.querySelector('#vsComputerBtn');
-	const easyBtn = document.querySelector('#easyBtn');
-	const mediumBtn = document.querySelector('#mediumBtn');
-	const hardBtn = document.querySelector('#hardBtn');
 
 	const checkWinner = (board) => {
 		const winConditions = [
@@ -68,7 +60,154 @@ const gameController = (() => {
 		}
 	};
 
-	// ##############################################################################################
+	function randomMove() {
+		const emptySpot = [];
+		for (let i = 0; i < 9; i += 1) {
+			if (gameBoard[i] === '') {
+				emptySpot.push(i);
+			}
+		}
+		const randomIndex = Math.floor(Math.random() * emptySpot.length);
+		const randomPlace = emptySpot[randomIndex];
+		player2.placeSign(randomPlace);
+	}
+
+	const scores = {
+		x: 1,
+		o: -1,
+		tie: 0,
+	};
+
+	function minimax(board, depth, isMaximizing) {
+		let result = checkWinner(board)[0];
+
+		if (result !== null) {
+			let score = scores[result];
+			return score;
+		}
+
+		if (isMaximizing) {
+			let bestScore = -Infinity;
+
+			for (let i = 0; i < 9; i++) {
+				if (board[i] === '') {
+					board[i] = 'x';
+
+					let score = minimax(board, depth + 1, false);
+					board[i] = '';
+
+					bestScore = Math.max(score, bestScore);
+				}
+			}
+
+			return bestScore;
+		} else {
+			let bestScore = Infinity;
+
+			for (let i = 0; i < 9; i++) {
+				if (board[i] === '') {
+					board[i] = 'o';
+
+					let score = minimax(board, depth + 1, true);
+					board[i] = '';
+
+					bestScore = Math.min(score, bestScore);
+				}
+			}
+
+			return bestScore;
+		}
+	}
+
+	function bestMove() {
+		let bestScore = -Infinity;
+		let moves = [];
+		for (let i = 0; i < 9; i++) {
+			if (gameBoard[i] === '') {
+				gameBoard[i] = 'x';
+
+				let score = minimax(gameBoard, 0, false);
+
+				gameBoard[i] = '';
+
+				if (score > bestScore) {
+					bestScore = score;
+					moves = [i];
+				} else if (score === bestScore) {
+					moves.push(i);
+				}
+			}
+		}
+		let move = moves[Math.floor(Math.random() * moves.length)];
+		return move;
+	}
+
+	function immediateWinMove() {
+		for (let i = 0; i < 9; i++) {
+			if (gameBoard[i] === '') {
+				gameBoard[i] = 'x';
+
+				if (checkWinner(gameBoard)[0] === 'x') {
+					gameBoard[i] = '';
+					return i;
+				}
+				gameBoard[i] = '';
+			}
+		}
+		return -1;
+	}
+
+	function makeMove(difficultyBtn, place) {
+		if (!difficultyBtn.classList.contains('selected') || isOver || gameBoard[place] !== '') {
+			return;
+		}
+
+		player1.placeSign(place);
+		whoWon();
+
+		if (isOver) {
+			return;
+		}
+
+		displayController.setMessage('X turn');
+		displayController.setWaitWall();
+
+		setTimeout(() => {
+			selectMove(difficultyBtn);
+
+			displayController.setMessage('O turn');
+			displayController.refreshBoardState();
+			whoWon();
+			displayController.removeWaitWall();
+		}, 1000);
+	}
+
+	function selectMove(difficultyBtn) {
+		if (difficultyBtn === easyBtn) {
+			return randomMove();
+		} else if (difficultyBtn === mediumBtn) {
+			return mediumDifficultyMove();
+		} else if (difficultyBtn === hardBtn) {
+			return hardDifficultyMove();
+		}
+	}
+
+	function mediumDifficultyMove() {
+		if (Math.random() < 0.5) {
+			hardDifficultyMove();
+		} else {
+			randomMove();
+		}
+	}
+
+	function hardDifficultyMove() {
+		let winMove = immediateWinMove();
+		if (winMove !== -1) {
+			player2.placeSign(winMove);
+		} else {
+			player2.placeSign(bestMove());
+		}
+	}
 
 	const play = (place) => {
 		if (vsPlayerBtn.classList.contains('selected')) {
@@ -91,162 +230,6 @@ const gameController = (() => {
 							displayController.setMessage('O turn');
 						}
 					}
-				} else {
-					displayController.takenBy();
-				}
-			}
-		}
-
-		// ###########################################################################
-
-		function placeSignAndCheckWinner(player, place) {
-			if (gameBoard[place] === '') {
-				player.placeSign(place);
-
-				whoWon();
-
-				return true;
-			} else {
-				// return false;
-			}
-		}
-
-		function randomMove() {
-			const emptySpot = [];
-			for (let i = 0; i < 9; i += 1) {
-				if (gameBoard[i] === '') {
-					emptySpot.push(i);
-				}
-			}
-			const randomIndex = Math.floor(Math.random() * emptySpot.length);
-			const randomPlace = emptySpot[randomIndex];
-			player2.placeSign(randomPlace);
-		}
-
-		const scores = {
-			x: 1,
-			o: -1,
-			tie: 0,
-		};
-
-		function minimax(board, depth, isMaximizing) {
-			let result = checkWinner(board)[0];
-
-			if (result !== null) {
-				let score = scores[result];
-				return score;
-			}
-
-			if (isMaximizing) {
-				let bestScore = -Infinity;
-
-				for (let i = 0; i < 9; i++) {
-					if (board[i] === '') {
-						board[i] = 'x';
-
-						let score = minimax(board, depth + 1, false);
-						board[i] = '';
-
-						bestScore = Math.max(score, bestScore);
-					}
-				}
-
-				return bestScore;
-			} else {
-				let bestScore = Infinity;
-
-				for (let i = 0; i < 9; i++) {
-					if (board[i] === '') {
-						board[i] = 'o';
-
-						let score = minimax(board, depth + 1, true);
-						board[i] = '';
-
-						bestScore = Math.min(score, bestScore);
-					}
-				}
-
-				return bestScore;
-			}
-		}
-
-		function bestMove() {
-			let bestScore = -Infinity;
-			let moves = [];
-			for (let i = 0; i < 9; i++) {
-				if (gameBoard[i] === '') {
-					gameBoard[i] = 'x';
-
-					let score = minimax(gameBoard, 0, false);
-
-					gameBoard[i] = '';
-
-					if (score > bestScore) {
-						bestScore = score;
-						moves = [i];
-					} else if (score === bestScore) {
-						moves.push(i);
-					}
-				}
-			}
-			let move = moves[Math.floor(Math.random() * moves.length)];
-			return move;
-		}
-
-		function immediateWinMove() {
-			for (let i = 0; i < 9; i++) {
-				if (gameBoard[i] === '') {
-					gameBoard[i] = 'x';
-
-					if (checkWinner(gameBoard)[0] === 'x') {
-						gameBoard[i] = '';
-						return i;
-					}
-					gameBoard[i] = '';
-				}
-			}
-			return -1;
-		}
-
-		function makeMove(difficultyBtn, place) {
-			if (difficultyBtn.classList.contains('selected')) {
-				if (isOver === false) {
-					if (placeSignAndCheckWinner(player1, place)) {
-						if (isOver === false) {
-							displayController.setMessage('X turn');
-							document.body.appendChild(document.createElement('div')).className = 'wait-wall';
-
-							setTimeout(() => {
-								if (difficultyBtn === easyBtn) {
-									randomMove();
-								} else if (difficultyBtn === mediumBtn) {
-									if (Math.random() < 0.5) {
-										let winMove = immediateWinMove();
-										if (winMove !== -1) {
-											player2.placeSign(winMove);
-										} else {
-											player2.placeSign(bestMove());
-										}
-									} else {
-										randomMove();
-									}
-								} else if (difficultyBtn === hardBtn) {
-									let winMove = immediateWinMove();
-									if (winMove !== -1) {
-										player2.placeSign(winMove);
-									} else {
-										player2.placeSign(bestMove());
-									}
-								}
-
-								displayController.setMessage('O turn');
-								displayController.refreshBoardState();
-
-								whoWon();
-								document.querySelector('.wait-wall').remove();
-							}, 1000);
-						}
-					}
 				}
 			}
 		}
@@ -262,42 +245,9 @@ const gameController = (() => {
 		turn = 'o';
 
 		displayController.setMessage("Let's start: O turn");
-
-		areas.forEach((area) => {
-			area.classList.remove('blueWon', 'redWon');
-		});
 	};
 
-	const buttons = [vsPlayerBtn, vsComputerBtn, easyBtn, mediumBtn, hardBtn];
-
-	function resetButtons() {
-		buttons.forEach((btn) => {
-			btn.classList.remove('selected');
-		});
-	}
-
-	function setButton(btn) {
-		if (!btn.classList.contains('selected')) {
-			restart();
-			displayController.refreshBoardState();
-		}
-		btn.classList.add('selected');
-	}
-
-	function setupButtons(button, selectedButtons) {
-		button.addEventListener('click', () => {
-			resetButtons();
-			selectedButtons.forEach(setButton);
-		});
-	}
-
-	setupButtons(vsPlayerBtn, [vsPlayerBtn]);
-	setupButtons(vsComputerBtn, [vsComputerBtn, easyBtn]);
-	setupButtons(easyBtn, [vsComputerBtn, easyBtn]);
-	setupButtons(mediumBtn, [vsComputerBtn, mediumBtn]);
-	setupButtons(hardBtn, [vsComputerBtn, hardBtn]);
-
-	return { play, restart, turn };
+	return { play, restart };
 })();
 
 const displayController = (() => {
@@ -306,11 +256,18 @@ const displayController = (() => {
 	const restartBtn = document.querySelector('#restartBtn');
 	const areas = document.querySelectorAll('.area');
 
+	const vsPlayerBtn = document.querySelector('#vsPlayerBtn');
+	const vsComputerBtn = document.querySelector('#vsComputerBtn');
+	const easyBtn = document.querySelector('#easyBtn');
+	const mediumBtn = document.querySelector('#mediumBtn');
+	const hardBtn = document.querySelector('#hardBtn');
+
+	const buttons = [vsPlayerBtn, vsComputerBtn, easyBtn, mediumBtn, hardBtn];
+
 	const refreshBoardState = () => {
 		for (let i = 0; i < 9; i += 1) {
 			const area = document.querySelector(`[data-index="${i}"] > span`);
 			area.textContent = gameBoard[i];
-
 			area.classList.toggle('red', area.textContent === 'x');
 			area.classList.toggle('blue', area.textContent === 'o');
 		}
@@ -321,15 +278,21 @@ const displayController = (() => {
 		statusBox.innerHTML = message.replace('O', '<span class="o">&nbsp;O&nbsp;</span>').replace('X', '<span class="x">&nbsp;X&nbsp;</span>');
 	};
 
-	const takenBy = (e) => {
-		console.log(isOver);
+	const setWaitWall = () => {
+		document.body.appendChild(document.createElement('div')).className = 'wait-wall';
+	};
 
+	const removeWaitWall = () => {
+		document.querySelector('.wait-wall').remove();
+	};
+
+	const takenBy = (e) => {
 		if (isOver === false) {
 			setMessage(`This place is already taken by ${e.target.textContent.toUpperCase()}`);
 
 			setTimeout(() => {
 				if (isOver === false) {
-					setMessage(`${gameController.turn.toUpperCase()} turn`);
+					setMessage(`${turn.toUpperCase()} turn`);
 				}
 			}, 2000);
 		}
@@ -362,6 +325,39 @@ const displayController = (() => {
 		}
 	};
 
+	const clearHighlight = () => {
+		areas.forEach((area) => {
+			area.classList.remove('blueWon', 'redWon');
+		});
+	};
+
+	function resetButtons() {
+		buttons.forEach((btn) => {
+			btn.classList.remove('selected');
+		});
+	}
+
+	function setButton(btn) {
+		if (!btn.classList.contains('selected')) {
+			gameController.restart();
+			displayController.refreshBoardState();
+		}
+		btn.classList.add('selected');
+	}
+
+	function setupButtons(button, selectedButtons) {
+		button.addEventListener('click', () => {
+			resetButtons();
+			selectedButtons.forEach(setButton);
+		});
+	}
+
+	setupButtons(vsPlayerBtn, [vsPlayerBtn]);
+	setupButtons(vsComputerBtn, [vsComputerBtn, easyBtn]);
+	setupButtons(easyBtn, [vsComputerBtn, easyBtn]);
+	setupButtons(mediumBtn, [vsComputerBtn, mediumBtn]);
+	setupButtons(hardBtn, [vsComputerBtn, hardBtn]);
+
 	board.addEventListener('click', (e) => takenBy(e));
 
 	board.addEventListener('click', (e) => {
@@ -372,10 +368,11 @@ const displayController = (() => {
 
 	restartBtn.addEventListener('click', () => {
 		gameController.restart();
+		clearHighlight();
 		refreshBoardState();
 	});
 
-	return { refreshBoardState, setMessage, statusBox, handleWin, handleTie, takenBy };
+	return { refreshBoardState, setMessage, setWaitWall, removeWaitWall, handleWin, handleTie };
 })();
 
 gameController.restart();
