@@ -1,4 +1,5 @@
 let gameBoard = Array(9).fill('');
+let isOver = false;
 
 const gameController = (() => {
 	const playerFactory = (sign) => {
@@ -14,7 +15,6 @@ const gameController = (() => {
 	const player1 = playerFactory('o');
 	const player2 = playerFactory('x');
 
-	let isOver = false;
 	let turn = 'o';
 
 	const areas = document.querySelectorAll('.area');
@@ -23,54 +23,6 @@ const gameController = (() => {
 	const easyBtn = document.querySelector('#easyBtn');
 	const mediumBtn = document.querySelector('#mediumBtn');
 	const hardBtn = document.querySelector('#hardBtn');
-
-	// ##############################################################################################
-
-	const whoWon = () => {
-		const winConditions = [
-			[0, 1, 2],
-			[3, 4, 5],
-			[6, 7, 8],
-			[0, 3, 6],
-			[1, 4, 7],
-			[2, 5, 8],
-			[0, 4, 8],
-			[2, 4, 6],
-		];
-
-		for (let i = 0; i < winConditions.length; i += 1) {
-			const condition = winConditions[i];
-
-			if (gameBoard[condition[0]] === 'o' && gameBoard[condition[1]] === 'o' && gameBoard[condition[2]] === 'o') {
-				displayController.setMessage('O has won!');
-				isOver = true;
-
-				for (let i = 0; i < 3; i += 1) {
-					areas[condition[i]].classList.add('blueWon');
-				}
-				// return 'o';
-			} else if (isOver === false && gameBoard[condition[0]] === 'x' && gameBoard[condition[1]] === 'x' && gameBoard[condition[2]] === 'x') {
-				displayController.setMessage('X has won!');
-				isOver = true;
-
-				for (let i = 0; i < 3; i += 1) {
-					areas[condition[i]].classList.add('redWon');
-				}
-
-				// return 'x';
-			}
-		}
-
-		if (isOver === false) {
-			if (gameBoard.every((element) => element !== '')) {
-				displayController.setMessage("O It's a draw! X");
-				isOver = true;
-				// return 'tie';
-			}
-		}
-
-		// return null;
-	};
 
 	const checkWinner = (board) => {
 		const winConditions = [
@@ -88,46 +40,35 @@ const gameController = (() => {
 			const condition = winConditions[i];
 
 			if (board[condition[0]] === 'o' && board[condition[1]] === 'o' && board[condition[2]] === 'o') {
-				return 'o';
+				return ['o', condition];
 			} else if (board[condition[0]] === 'x' && board[condition[1]] === 'x' && board[condition[2]] === 'x') {
-				return 'x';
+				return ['x', condition];
 			}
 		}
 
 		if (board.every((element) => element !== '')) {
-			return 'tie';
+			return ['tie'];
 		}
 
-		return null;
+		return [null];
 	};
 
-	// const whoWon2 = () => {
+	const whoWon = () => {
+		const winner = checkWinner(gameBoard)[0];
+		const condition = checkWinner(gameBoard)[1];
 
-	// 	if (checkWinner(gameBoard) === 'o' ){
-	// 		displayController.setMessage('O has won!');
-	// 		isOver = true;
-	// 		for (let i = 0; i < 3; i += 1) {
-	// 			areas[condition[i]].classList.add('blueWon');
-	// 		}
-	// 	}
-	// 	if (checkWinner(gameBoard) === 'x' ){
-	// 		displayController.setMessage('X has won!');
-	// 		isOver = true;
+		if (winner === 'o' || winner === 'x') {
+			isOver = true;
+			displayController.handleWin(winner, condition);
+		} else if (winner === 'tie') {
+			isOver = true;
+			displayController.handleTie();
+		} else {
+			isOver = false;
+		}
+	};
 
-	// 		for (let i = 0; i < 3; i += 1) {
-	// 			areas[condition[i]].classList.add('redWon');
-	// 		}
-	// 			}
-
-	// 							if (checkWinner(gameBoard) === 'tie' ){
-	// 								displayController.setMessage("O It's a draw! X");
-	// 								isOver = true;
-	// 							}
-
-	// 	if (checkWinner(gameBoard) === null){
-	// isOver = false;}
-
-	// 	}
+	// ##############################################################################################
 
 	const play = (place) => {
 		if (vsPlayerBtn.classList.contains('selected')) {
@@ -156,7 +97,7 @@ const gameController = (() => {
 			}
 		}
 
-		// ##############################################################################################
+		// ###########################################################################
 
 		function placeSignAndCheckWinner(player, place) {
 			if (gameBoard[place] === '') {
@@ -166,8 +107,7 @@ const gameController = (() => {
 
 				return true;
 			} else {
-				displayController.takenBy();
-				return false;
+				// return false;
 			}
 		}
 
@@ -190,7 +130,7 @@ const gameController = (() => {
 		};
 
 		function minimax(board, depth, isMaximizing) {
-			let result = checkWinner(board);
+			let result = checkWinner(board)[0];
 
 			if (result !== null) {
 				let score = scores[result];
@@ -258,7 +198,7 @@ const gameController = (() => {
 				if (gameBoard[i] === '') {
 					gameBoard[i] = 'x';
 
-					if (checkWinner(gameBoard) === 'x') {
+					if (checkWinner(gameBoard)[0] === 'x') {
 						gameBoard[i] = '';
 						return i;
 					}
@@ -300,7 +240,8 @@ const gameController = (() => {
 								}
 
 								displayController.setMessage('O turn');
-								displayController.refresh();
+								displayController.refreshBoardState();
+
 								whoWon();
 								document.querySelector('.wait-wall').remove();
 							}, 1000);
@@ -338,7 +279,7 @@ const gameController = (() => {
 	function setButton(btn) {
 		if (!btn.classList.contains('selected')) {
 			restart();
-			displayController.refresh();
+			displayController.refreshBoardState();
 		}
 		btn.classList.add('selected');
 	}
@@ -351,7 +292,7 @@ const gameController = (() => {
 	}
 
 	setupButtons(vsPlayerBtn, [vsPlayerBtn]);
-	setupButtons(vsComputerBtn, [vsComputerBtn, hardBtn]);
+	setupButtons(vsComputerBtn, [vsComputerBtn, easyBtn]);
 	setupButtons(easyBtn, [vsComputerBtn, easyBtn]);
 	setupButtons(mediumBtn, [vsComputerBtn, mediumBtn]);
 	setupButtons(hardBtn, [vsComputerBtn, hardBtn]);
@@ -363,50 +304,78 @@ const displayController = (() => {
 	const statusBox = document.querySelector('.status-box');
 	const board = document.querySelector('.board');
 	const restartBtn = document.querySelector('#restartBtn');
+	const areas = document.querySelectorAll('.area');
 
-	function refresh() {
+	const refreshBoardState = () => {
 		for (let i = 0; i < 9; i += 1) {
 			const area = document.querySelector(`[data-index="${i}"] > span`);
 			area.textContent = gameBoard[i];
 
-			// console.log(gameController.gameBoard);
-			// area.textContent = gameController.gameBoard[i];
-
 			area.classList.toggle('red', area.textContent === 'x');
 			area.classList.toggle('blue', area.textContent === 'o');
 		}
-	}
+	};
 
 	const setMessage = (message) => {
 		statusBox.textContent = message;
 		statusBox.innerHTML = message.replace('O', '<span class="o">&nbsp;O&nbsp;</span>').replace('X', '<span class="x">&nbsp;X&nbsp;</span>');
 	};
 
-	function takenBy() {
-		document.addEventListener(
-			'click',
-			(e) => {
-				setMessage(`This place is already taken by ${e.target.textContent.toUpperCase()}`);
-				setTimeout(() => {
+	const takenBy = (e) => {
+		console.log(isOver);
+
+		if (isOver === false) {
+			setMessage(`This place is already taken by ${e.target.textContent.toUpperCase()}`);
+
+			setTimeout(() => {
+				if (isOver === false) {
 					setMessage(`${gameController.turn.toUpperCase()} turn`);
-				}, 2000);
-			},
-			{ once: true }
-		);
-	}
+				}
+			}, 2000);
+		}
+	};
+
+	const handleWin = (player, condition) => {
+		displayWinningMessage(player);
+		highlightWinningAreas(player, condition);
+	};
+
+	const handleTie = () => {
+		setMessage("O It's a draw! X");
+	};
+
+	const displayWinningMessage = (player) => {
+		setMessage(`${player.toUpperCase()} has won!`);
+	};
+
+	const highlightWinningAreas = (player, condition) => {
+		if (player === 'o') {
+			player = 'blue';
+		}
+
+		if (player === 'x') {
+			player = 'red';
+		}
+
+		for (let i = 0; i < 3; i += 1) {
+			areas[condition[i]].classList.add(`${player}Won`);
+		}
+	};
+
+	board.addEventListener('click', (e) => takenBy(e));
 
 	board.addEventListener('click', (e) => {
 		const here = parseInt(e.target.getAttribute('data-index'));
 		gameController.play(here);
-		refresh();
+		refreshBoardState();
 	});
 
 	restartBtn.addEventListener('click', () => {
 		gameController.restart();
-		refresh();
+		refreshBoardState();
 	});
 
-	return { refresh, setMessage, statusBox, takenBy };
+	return { refreshBoardState, setMessage, statusBox, handleWin, handleTie, takenBy };
 })();
 
 gameController.restart();
