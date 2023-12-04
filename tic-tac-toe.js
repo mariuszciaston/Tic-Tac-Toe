@@ -370,21 +370,20 @@ const displayController = (() => {
 		});
 	}
 
-	setupButtons(vsPlayerBtn, [vsPlayerBtn]);
-	setupButtons(vsComputerBtn, [vsComputerBtn, easyBtn]);
-	setupButtons(easyBtn, [vsComputerBtn, easyBtn]);
-	setupButtons(mediumBtn, [vsComputerBtn, mediumBtn]);
-	setupButtons(hardBtn, [vsComputerBtn, hardBtn]);
-
-	board.addEventListener('click', (e) => takenBy(e));
-
 	board.addEventListener('click', (e) => {
+		takenBy(e);
 		const here = parseInt(e.target.getAttribute('data-index'), 10);
 		gameController.play(here);
 		refreshBoardState();
 	});
 
 	restartBtn.addEventListener('click', () => restartBoard());
+
+	setupButtons(vsPlayerBtn, [vsPlayerBtn]);
+	setupButtons(vsComputerBtn, [vsComputerBtn, easyBtn]);
+	setupButtons(easyBtn, [vsComputerBtn, easyBtn]);
+	setupButtons(mediumBtn, [vsComputerBtn, mediumBtn]);
+	setupButtons(hardBtn, [vsComputerBtn, hardBtn]);
 
 	return { refreshBoardState, setMessage, setWaitWall, removeWaitWall, handleWin, handleTie };
 })();
