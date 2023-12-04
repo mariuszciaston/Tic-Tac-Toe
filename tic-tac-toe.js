@@ -1,8 +1,15 @@
+/* eslint-disable no-use-before-define */
+
 let gameBoard = Array(9).fill('');
 let isOver = false;
 let turn = 'o';
 
 const gameController = (() => {
+	const vsPlayerBtn = document.querySelector('#vsPlayerBtn');
+	const easyBtn = document.querySelector('#easyBtn');
+	const mediumBtn = document.querySelector('#mediumBtn');
+	const hardBtn = document.querySelector('#hardBtn');
+
 	const playerFactory = (sign) => {
 		const placeSign = (place) => {
 			if (gameBoard[place] === '') {
@@ -33,7 +40,8 @@ const gameController = (() => {
 
 			if (board[condition[0]] === 'o' && board[condition[1]] === 'o' && board[condition[2]] === 'o') {
 				return ['o', condition];
-			} else if (board[condition[0]] === 'x' && board[condition[1]] === 'x' && board[condition[2]] === 'x') {
+			}
+			if (board[condition[0]] === 'x' && board[condition[1]] === 'x' && board[condition[2]] === 'x') {
 				return ['x', condition];
 			}
 		}
@@ -79,54 +87,55 @@ const gameController = (() => {
 	};
 
 	function minimax(board, depth, isMaximizing) {
-		let result = checkWinner(board)[0];
+		const result = checkWinner(board)[0];
+
+		const newBoard = board;
 
 		if (result !== null) {
-			let score = scores[result];
+			const score = scores[result];
 			return score;
 		}
 
 		if (isMaximizing) {
 			let bestScore = -Infinity;
 
-			for (let i = 0; i < 9; i++) {
+			for (let i = 0; i < 9; i += 1) {
 				if (board[i] === '') {
-					board[i] = 'x';
+					newBoard[i] = 'x';
 
-					let score = minimax(board, depth + 1, false);
-					board[i] = '';
+					const score = minimax(board, depth + 1, false);
+					newBoard[i] = '';
 
 					bestScore = Math.max(score, bestScore);
 				}
 			}
 
 			return bestScore;
-		} else {
-			let bestScore = Infinity;
-
-			for (let i = 0; i < 9; i++) {
-				if (board[i] === '') {
-					board[i] = 'o';
-
-					let score = minimax(board, depth + 1, true);
-					board[i] = '';
-
-					bestScore = Math.min(score, bestScore);
-				}
-			}
-
-			return bestScore;
 		}
+		let bestScore = Infinity;
+
+		for (let i = 0; i < 9; i += 1) {
+			if (board[i] === '') {
+				newBoard[i] = 'o';
+
+				const score = minimax(board, depth + 1, true);
+				newBoard[i] = '';
+
+				bestScore = Math.min(score, bestScore);
+			}
+		}
+
+		return bestScore;
 	}
 
 	function bestMove() {
 		let bestScore = -Infinity;
 		let moves = [];
-		for (let i = 0; i < 9; i++) {
+		for (let i = 0; i < 9; i += 1) {
 			if (gameBoard[i] === '') {
 				gameBoard[i] = 'x';
 
-				let score = minimax(gameBoard, 0, false);
+				const score = minimax(gameBoard, 0, false);
 
 				gameBoard[i] = '';
 
@@ -138,12 +147,12 @@ const gameController = (() => {
 				}
 			}
 		}
-		let move = moves[Math.floor(Math.random() * moves.length)];
+		const move = moves[Math.floor(Math.random() * moves.length)];
 		return move;
 	}
 
 	function immediateWinMove() {
-		for (let i = 0; i < 9; i++) {
+		for (let i = 0; i < 9; i += 1) {
 			if (gameBoard[i] === '') {
 				gameBoard[i] = 'x';
 
@@ -185,11 +194,14 @@ const gameController = (() => {
 	function selectMove(difficultyBtn) {
 		if (difficultyBtn === easyBtn) {
 			return randomMove();
-		} else if (difficultyBtn === mediumBtn) {
+		}
+		if (difficultyBtn === mediumBtn) {
 			return mediumDifficultyMove();
-		} else if (difficultyBtn === hardBtn) {
+		}
+		if (difficultyBtn === hardBtn) {
 			return hardDifficultyMove();
 		}
+		return null;
 	}
 
 	function mediumDifficultyMove() {
@@ -201,7 +213,7 @@ const gameController = (() => {
 	}
 
 	function hardDifficultyMove() {
-		let winMove = immediateWinMove();
+		const winMove = immediateWinMove();
 		if (winMove !== -1) {
 			player2.placeSign(winMove);
 		} else {
@@ -312,16 +324,17 @@ const displayController = (() => {
 	};
 
 	const highlightWinningAreas = (player, condition) => {
+		let playerColor;
 		if (player === 'o') {
-			player = 'blue';
+			playerColor = 'blue';
 		}
 
 		if (player === 'x') {
-			player = 'red';
+			playerColor = 'red';
 		}
 
 		for (let i = 0; i < 3; i += 1) {
-			areas[condition[i]].classList.add(`${player}Won`);
+			areas[condition[i]].classList.add(`${playerColor}Won`);
 		}
 	};
 
@@ -329,6 +342,12 @@ const displayController = (() => {
 		areas.forEach((area) => {
 			area.classList.remove('blueWon', 'redWon');
 		});
+	};
+
+	const restartBoard = () => {
+		gameController.restart();
+		clearHighlight();
+		refreshBoardState();
 	};
 
 	function resetButtons() {
@@ -339,8 +358,7 @@ const displayController = (() => {
 
 	function setButton(btn) {
 		if (!btn.classList.contains('selected')) {
-			gameController.restart();
-			displayController.refreshBoardState();
+			restartBoard();
 		}
 		btn.classList.add('selected');
 	}
@@ -361,16 +379,12 @@ const displayController = (() => {
 	board.addEventListener('click', (e) => takenBy(e));
 
 	board.addEventListener('click', (e) => {
-		const here = parseInt(e.target.getAttribute('data-index'));
+		const here = parseInt(e.target.getAttribute('data-index'), 10);
 		gameController.play(here);
 		refreshBoardState();
 	});
 
-	restartBtn.addEventListener('click', () => {
-		gameController.restart();
-		clearHighlight();
-		refreshBoardState();
-	});
+	restartBtn.addEventListener('click', () => restartBoard());
 
 	return { refreshBoardState, setMessage, setWaitWall, removeWaitWall, handleWin, handleTie };
 })();
