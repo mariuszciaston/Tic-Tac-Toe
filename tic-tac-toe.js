@@ -1,8 +1,12 @@
 /* eslint-disable no-use-before-define */
 
-let gameBoard = Array(9).fill('');
-let isOver = false;
-let turn = 'o';
+const gameState = (() => {
+	const gameBoard = Array(9).fill('');
+	const isOver = false;
+	const turn = 'o';
+
+	return { gameBoard, isOver, turn };
+})();
 
 const gameController = (() => {
 	const vsPlayerBtn = document.querySelector('#vsPlayerBtn');
@@ -12,8 +16,8 @@ const gameController = (() => {
 
 	const playerFactory = (sign) => {
 		const placeSign = (place) => {
-			if (gameBoard[place] === '') {
-				gameBoard[place] = sign;
+			if (gameState.gameBoard[place] === '') {
+				gameState.gameBoard[place] = sign;
 			}
 		};
 
@@ -54,24 +58,24 @@ const gameController = (() => {
 	};
 
 	const whoWon = () => {
-		const winner = checkWinner(gameBoard)[0];
-		const condition = checkWinner(gameBoard)[1];
+		const winner = checkWinner(gameState.gameBoard)[0];
+		const condition = checkWinner(gameState.gameBoard)[1];
 
 		if (winner === 'o' || winner === 'x') {
-			isOver = true;
+			gameState.isOver = true;
 			displayController.handleWin(winner, condition);
 		} else if (winner === 'tie') {
-			isOver = true;
+			gameState.isOver = true;
 			displayController.handleTie();
 		} else {
-			isOver = false;
+			gameState.isOver = false;
 		}
 	};
 
 	const randomMove = () => {
 		const emptySpot = [];
 		for (let i = 0; i < 9; i += 1) {
-			if (gameBoard[i] === '') {
+			if (gameState.gameBoard[i] === '') {
 				emptySpot.push(i);
 			}
 		}
@@ -132,12 +136,12 @@ const gameController = (() => {
 		let bestScore = -Infinity;
 		let moves = [];
 		for (let i = 0; i < 9; i += 1) {
-			if (gameBoard[i] === '') {
-				gameBoard[i] = 'x';
+			if (gameState.gameBoard[i] === '') {
+				gameState.gameBoard[i] = 'x';
 
-				const score = minimax(gameBoard, 0, false);
+				const score = minimax(gameState.gameBoard, 0, false);
 
-				gameBoard[i] = '';
+				gameState.gameBoard[i] = '';
 
 				if (score > bestScore) {
 					bestScore = score;
@@ -153,28 +157,28 @@ const gameController = (() => {
 
 	const immediateWinMove = () => {
 		for (let i = 0; i < 9; i += 1) {
-			if (gameBoard[i] === '') {
-				gameBoard[i] = 'x';
+			if (gameState.gameBoard[i] === '') {
+				gameState.gameBoard[i] = 'x';
 
-				if (checkWinner(gameBoard)[0] === 'x') {
-					gameBoard[i] = '';
+				if (checkWinner(gameState.gameBoard)[0] === 'x') {
+					gameState.gameBoard[i] = '';
 					return i;
 				}
-				gameBoard[i] = '';
+				gameState.gameBoard[i] = '';
 			}
 		}
 		return -1;
 	};
 
 	const makeMove = (difficultyBtn, place) => {
-		if (!difficultyBtn.classList.contains('selected') || isOver || gameBoard[place] !== '') {
+		if (!difficultyBtn.classList.contains('selected') || gameState.isOver || gameState.gameBoard[place] !== '') {
 			return;
 		}
 
 		player1.placeSign(place);
 		whoWon();
 
-		if (isOver) {
+		if (gameState.isOver) {
 			return;
 		}
 
@@ -185,7 +189,7 @@ const gameController = (() => {
 			selectMove(difficultyBtn);
 
 			displayController.setMessage('O turn');
-			displayController.refreshBoardState();
+			displayController.refreshBoard();
 			whoWon();
 			displayController.removeWaitWall();
 		}, 1000);
@@ -223,22 +227,22 @@ const gameController = (() => {
 
 	const play = (place) => {
 		if (vsPlayerBtn.classList.contains('selected')) {
-			if (isOver === false) {
-				if (gameBoard[place] === '') {
-					if (turn === 'o') {
+			if (gameState.isOver === false) {
+				if (gameState.gameBoard[place] === '') {
+					if (gameState.turn === 'o') {
 						player1.placeSign(place);
 						whoWon();
 
-						if (isOver === false) {
-							turn = 'x';
+						if (gameState.isOver === false) {
+							gameState.turn = 'x';
 							displayController.setMessage('X turn');
 						}
-					} else if (turn === 'x') {
+					} else if (gameState.turn === 'x') {
 						player2.placeSign(place);
 						whoWon();
 
-						if (isOver === false) {
-							turn = 'o';
+						if (gameState.isOver === false) {
+							gameState.turn = 'o';
 							displayController.setMessage('O turn');
 						}
 					}
@@ -252,9 +256,9 @@ const gameController = (() => {
 	};
 
 	const restart = () => {
-		gameBoard = Array(9).fill('');
-		isOver = false;
-		turn = 'o';
+		gameState.gameBoard = Array(9).fill('');
+		gameState.isOver = false;
+		gameState.turn = 'o';
 
 		displayController.setMessage("Let's start: O turn");
 	};
@@ -276,10 +280,10 @@ const displayController = (() => {
 
 	const buttons = [vsPlayerBtn, vsComputerBtn, easyBtn, mediumBtn, hardBtn];
 
-	const refreshBoardState = () => {
+	const refreshBoard = () => {
 		for (let i = 0; i < 9; i += 1) {
 			const area = document.querySelector(`[data-index="${i}"] > span`);
-			area.textContent = gameBoard[i];
+			area.textContent = gameState.gameBoard[i];
 			area.classList.toggle('red', area.textContent === 'x');
 			area.classList.toggle('blue', area.textContent === 'o');
 		}
@@ -299,12 +303,12 @@ const displayController = (() => {
 	};
 
 	const takenBy = (e) => {
-		if (isOver === false) {
+		if (gameState.isOver === false) {
 			setMessage(`This place is already taken by ${e.target.textContent.toUpperCase()}`);
 
 			setTimeout(() => {
-				if (isOver === false) {
-					setMessage(`${turn.toUpperCase()} turn`);
+				if (gameState.isOver === false) {
+					setMessage(`${gameState.turn.toUpperCase()} turn`);
 				}
 			}, 2000);
 		}
@@ -347,7 +351,7 @@ const displayController = (() => {
 	const restartBoard = () => {
 		gameController.restart();
 		clearHighlight();
-		refreshBoardState();
+		refreshBoard();
 	};
 
 	const resetButtons = () => {
@@ -374,7 +378,7 @@ const displayController = (() => {
 		takenBy(e);
 		const here = parseInt(e.target.getAttribute('data-index'), 10);
 		gameController.play(here);
-		refreshBoardState();
+		refreshBoard();
 	});
 
 	restartBtn.addEventListener('click', () => restartBoard());
@@ -385,7 +389,7 @@ const displayController = (() => {
 	setupButtons(mediumBtn, [vsComputerBtn, mediumBtn]);
 	setupButtons(hardBtn, [vsComputerBtn, hardBtn]);
 
-	return { refreshBoardState, setMessage, setWaitWall, removeWaitWall, handleWin, handleTie };
+	return { refreshBoard, setMessage, setWaitWall, removeWaitWall, handleWin, handleTie };
 })();
 
 gameController.restart();
