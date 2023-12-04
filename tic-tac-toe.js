@@ -68,7 +68,7 @@ const gameController = (() => {
 		}
 	};
 
-	function randomMove() {
+	const randomMove = () => {
 		const emptySpot = [];
 		for (let i = 0; i < 9; i += 1) {
 			if (gameBoard[i] === '') {
@@ -78,7 +78,7 @@ const gameController = (() => {
 		const randomIndex = Math.floor(Math.random() * emptySpot.length);
 		const randomPlace = emptySpot[randomIndex];
 		player2.placeSign(randomPlace);
-	}
+	};
 
 	const scores = {
 		x: 1,
@@ -86,7 +86,7 @@ const gameController = (() => {
 		tie: 0,
 	};
 
-	function minimax(board, depth, isMaximizing) {
+	const minimax = (board, depth, isMaximizing) => {
 		const result = checkWinner(board)[0];
 
 		const newBoard = board;
@@ -126,9 +126,9 @@ const gameController = (() => {
 		}
 
 		return bestScore;
-	}
+	};
 
-	function bestMove() {
+	const bestMove = () => {
 		let bestScore = -Infinity;
 		let moves = [];
 		for (let i = 0; i < 9; i += 1) {
@@ -149,9 +149,9 @@ const gameController = (() => {
 		}
 		const move = moves[Math.floor(Math.random() * moves.length)];
 		return move;
-	}
+	};
 
-	function immediateWinMove() {
+	const immediateWinMove = () => {
 		for (let i = 0; i < 9; i += 1) {
 			if (gameBoard[i] === '') {
 				gameBoard[i] = 'x';
@@ -164,9 +164,9 @@ const gameController = (() => {
 			}
 		}
 		return -1;
-	}
+	};
 
-	function makeMove(difficultyBtn, place) {
+	const makeMove = (difficultyBtn, place) => {
 		if (!difficultyBtn.classList.contains('selected') || isOver || gameBoard[place] !== '') {
 			return;
 		}
@@ -189,9 +189,9 @@ const gameController = (() => {
 			whoWon();
 			displayController.removeWaitWall();
 		}, 1000);
-	}
+	};
 
-	function selectMove(difficultyBtn) {
+	const selectMove = (difficultyBtn) => {
 		if (difficultyBtn === easyBtn) {
 			return randomMove();
 		}
@@ -202,24 +202,24 @@ const gameController = (() => {
 			return hardDifficultyMove();
 		}
 		return null;
-	}
+	};
 
-	function mediumDifficultyMove() {
+	const mediumDifficultyMove = () => {
 		if (Math.random() < 0.5) {
 			hardDifficultyMove();
 		} else {
 			randomMove();
 		}
-	}
+	};
 
-	function hardDifficultyMove() {
+	const hardDifficultyMove = () => {
 		const winMove = immediateWinMove();
 		if (winMove !== -1) {
 			player2.placeSign(winMove);
 		} else {
 			player2.placeSign(bestMove());
 		}
-	}
+	};
 
 	const play = (place) => {
 		if (vsPlayerBtn.classList.contains('selected')) {
@@ -350,25 +350,25 @@ const displayController = (() => {
 		refreshBoardState();
 	};
 
-	function resetButtons() {
+	const resetButtons = () => {
 		buttons.forEach((btn) => {
 			btn.classList.remove('selected');
 		});
-	}
+	};
 
-	function setButton(btn) {
+	const setButton = (btn) => {
 		if (!btn.classList.contains('selected')) {
 			restartBoard();
 		}
 		btn.classList.add('selected');
-	}
+	};
 
-	function setupButtons(button, selectedButtons) {
+	const setupButtons = (button, selectedButtons) => {
 		button.addEventListener('click', () => {
 			resetButtons();
 			selectedButtons.forEach(setButton);
 		});
-	}
+	};
 
 	board.addEventListener('click', (e) => {
 		takenBy(e);
