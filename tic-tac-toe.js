@@ -226,33 +226,18 @@ const gameController = (() => {
 	};
 
 	const play = (place) => {
-		if (vsPlayerBtn.classList.contains('selected')) {
+		if (vsPlayerBtn.classList.contains('selected') && gameState.isOver === false && gameState.gameBoard[place] === '') {
+			const currentPlayer = gameState.turn === 'o' ? player1 : player2;
+			currentPlayer.placeSign(place);
+			whoWon();
+
 			if (gameState.isOver === false) {
-				if (gameState.gameBoard[place] === '') {
-					if (gameState.turn === 'o') {
-						player1.placeSign(place);
-						whoWon();
-
-						if (gameState.isOver === false) {
-							gameState.turn = 'x';
-							displayController.setMessage('X turn');
-						}
-					} else if (gameState.turn === 'x') {
-						player2.placeSign(place);
-						whoWon();
-
-						if (gameState.isOver === false) {
-							gameState.turn = 'o';
-							displayController.setMessage('O turn');
-						}
-					}
-				}
+				gameState.turn = gameState.turn === 'o' ? 'x' : 'o';
+				displayController.setMessage(`${gameState.turn.toUpperCase()} turn`);
 			}
 		}
 
-		makeMove(easyBtn, place);
-		makeMove(mediumBtn, place);
-		makeMove(hardBtn, place);
+		[easyBtn, mediumBtn, hardBtn].forEach((btn) => makeMove(btn, place));
 	};
 
 	const restart = () => {
