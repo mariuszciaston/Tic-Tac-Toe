@@ -17,5 +17,6 @@ Features:<br>
 • Clean UI<br>
 • Responsive design<br>
 
-[Live Demo](https://mariuszciaston.github.io/Tic-Tac-Toe/) :point_left:
+[Live Demo](https://mariuszciaston.github.io/Tic-Tac-Toe/) :point_left: <br><br>
 
+![Tic-Tac-Toe.png](Tic-Tac-Toe.png)
